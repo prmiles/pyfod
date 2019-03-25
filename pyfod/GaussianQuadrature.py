@@ -12,8 +12,8 @@ import numpy as np
 class GaussianQuadrature:
 
     def __init__(self, N=5, start=0.0, finish=1.0):
-        h = (finish - start)/N
         self.description = 'Gaussian Quadrature'
+        h = (finish - start)/N
         self.gpts = self.gauss_points(N=N, h=h, start=start)
         self.gwts = self.gauss_weights(N=N, h=h)
 
