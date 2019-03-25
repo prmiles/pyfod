@@ -6,6 +6,7 @@ Created on Fri Jul 19 10:14:07 2018
 @author: prmiles
 """
 
+
 # ---------------
 def riemann_sum_RL_FD(f, gridpoints, alpha):
     n = len(gridpoints)
