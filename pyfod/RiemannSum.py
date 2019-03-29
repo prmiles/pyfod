@@ -25,7 +25,7 @@ class RiemannSum(object):
         jj = grid.size - 1
         return (grid[1:jj+1] + grid[0:jj])/2
 
-    def rs_weights(cls, grid, alpha=0):
+    def rs_weights(cls, grid, alpha=0.0):
         jj = grid.size - 1
         term2 = (grid[jj] - grid[1:jj+1])**(1-alpha)
         term3 = (grid[jj] - grid[0:jj])**(1-alpha)
