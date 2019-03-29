@@ -29,5 +29,6 @@ if __name__ == '__main__':
     def f(t):
         return np.cos(2*t) + 3
 
-    a = (GRS.GQ.weights*f(GRS.GQ.points)).sum() + (GRS.RS.weights*f(GRS.RS.points)).sum()
+    a = ((GRS.GQ.weights*f(GRS.GQ.points)).sum()
+         + (GRS.RS.weights*f(GRS.RS.points)).sum())
     print('a = {}'.format(a))
