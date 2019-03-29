@@ -15,8 +15,8 @@ class RiemannSum(object):
         self.description = 'Riemann-Sum'
         self.check_alpha(alpha=alpha)
         grid = self.rs_grid(start, finish, N)
-        self.rpts = self.rs_points(grid)
-        self.rwts = self.rs_weights(grid, alpha=alpha)
+        self.points = self.rs_points(grid)
+        self.weights = self.rs_weights(grid, alpha=alpha)
 
     def rs_grid(cls, start, finish, N):
         return np.linspace(start=start, stop=finish, num=N)
@@ -47,5 +47,5 @@ if __name__ == '__main__':
     def f(t):
         return np.cos(2*t) + 3
 
-    a = (RS.rwts*f(RS.rpts)).sum()
+    a = (RS.weights*f(RS.points)).sum()
     print('a = {}'.format(a))
