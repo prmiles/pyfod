@@ -19,7 +19,7 @@ class GaussLegendre:
 
     def integrate(self, f):
         return (self.weights*f(self.points)).sum()
-    
+
     @classmethod
     def base_gauss_points(cls):
 

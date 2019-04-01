@@ -31,7 +31,9 @@ class GaussLaguerre:
             sys.exit('No function defined... provide function f')
         # transform kernel
         span = self.finish - self.start
-        return (self.weights*(span**(1-alpha)*f(span*self.points + self.start)*(1-self.points)**(-alpha))).sum()
+        return (self.weights*(span**(1-alpha)*f(span*self.points
+                              + self.start)*(1-self.points)**(-alpha))).sum()
+
 
 if __name__ == '__main__':
 
@@ -42,11 +44,10 @@ if __name__ == '__main__':
 
     a = GLag.integrate(f)
     print('a = {}'.format(a))
-    
+
     GLag = GaussLaguerre(N=8, start=0.0, finish=1.0, f=f, alpha=0.9)
     F1 = GLag.integrate()
     dt = 1e-4
     GLag = GaussLaguerre(N=8, start=0.0, finish=1.0-dt, f=f, alpha=0.9)
     F2 = GLag.integrate()
-    
     print('D[f(t)] = {}'.format((F1-F2)/dt))
