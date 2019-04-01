@@ -9,7 +9,7 @@ Created on Mon Mar 11 17:12:41 2019
 import numpy as np
 
 
-class GaussianQuadrature:
+class GaussianLegendre:
 
     def __init__(self, N=5, start=0.0, finish=1.0):
         self.description = 'Gaussian-Legendre Quadrature'
