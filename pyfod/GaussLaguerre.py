@@ -35,7 +35,7 @@ class GaussLaguerre:
                               + self.start)*(1-self.points)**(-alpha))).sum()
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
 
     def f(t):
         return np.cos(2*t)

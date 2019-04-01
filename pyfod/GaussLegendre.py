@@ -68,7 +68,7 @@ class GaussLegendre:
         return weights
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
 
     GQ = GaussLegendre(N=10, start=1.0, finish=12.0)
 

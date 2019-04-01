@@ -22,7 +22,7 @@ class GaussRiemannSum(object):
         self.RS = RiemannSum(N=NRS, start=switch_time, finish=finish)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
 
     GRS = GaussRiemannSum(NGQ=10, start=1.0, finish=12.0)
 

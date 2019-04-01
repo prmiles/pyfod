@@ -40,7 +40,7 @@ class RiemannSum(object):
             raise SystemExit
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
 
     RS = RiemannSum(alpha=0.0, N=100, start=1.0, finish=12.0)
 
