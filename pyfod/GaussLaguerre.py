@@ -10,7 +10,7 @@ import numpy as np
 import sys
 
 
-class GaussianLaguerre:
+class GaussLaguerre:
 
     def __init__(self, N=5, start=0.0, finish=1.0, alpha=0.0, f=None):
         self.description = 'Gaussian-Laguerre Quadrature'
@@ -38,15 +38,15 @@ if __name__ == '__main__':
     def f(t):
         return np.cos(2*t)
 
-    GLag = GaussianLaguerre(N=100, start=1.0, finish=12.0)
+    GLag = GaussLaguerre(N=100, start=1.0, finish=12.0)
 
     a = GLag.integrate(f)
     print('a = {}'.format(a))
     
-    GLag = GaussianLaguerre(N=8, start=0.0, finish=1.0, f=f, alpha=0.9)
+    GLag = GaussLaguerre(N=8, start=0.0, finish=1.0, f=f, alpha=0.9)
     F1 = GLag.integrate()
     dt = 1e-4
-    GLag = GaussianLaguerre(N=8, start=0.0, finish=1.0-dt, f=f, alpha=0.9)
+    GLag = GaussLaguerre(N=8, start=0.0, finish=1.0-dt, f=f, alpha=0.9)
     F2 = GLag.integrate()
     
     print('D[f(t)] = {}'.format((F1-F2)/dt))
