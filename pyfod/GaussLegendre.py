@@ -9,7 +9,7 @@ Created on Mon Mar 11 17:12:41 2019
 import numpy as np
 
 
-class GaussianLegendre:
+class GaussLegendre:
 
     def __init__(self, N=5, start=0.0, finish=1.0):
         self.description = 'Gaussian-Legendre Quadrature'
@@ -70,7 +70,7 @@ class GaussianLegendre:
 
 if __name__ == '__main__':
 
-    GQ = GaussianQuadrature(N=10, start=1.0, finish=12.0)
+    GQ = GaussLegendre(N=10, start=1.0, finish=12.0)
 
     def f(t):
         return np.cos(2*t) + 3
