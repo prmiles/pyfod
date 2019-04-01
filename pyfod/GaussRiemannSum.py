@@ -6,25 +6,25 @@ Created on Mon Mar 25 14:51:32 2019
 @author: prmiles
 """
 
-from pyfod.GaussianQuadrature import GaussianQuadrature
+from pyfod.GaussLegendre import GaussLegendre
 from pyfod.RiemannSum import RiemannSum
 import numpy as np
 
 
-class GaussianRiemannSum(object):
+class GaussRiemannSum(object):
 
     def __init__(self, NGQ=5, NRS=20, pGQ=0.9, start=0.0, finish=1.0):
         self.description = 'Gaussian Quadrature, Riemann-Sum'
         # setup GQ points/weights
         switch_time = (finish - start)*pGQ
-        self.GQ = GaussianQuadrature(N=NGQ, start=start, finish=switch_time)
+        self.GQ = GaussLegendre(N=NGQ, start=start, finish=switch_time)
         # setup RS points/weights
         self.RS = RiemannSum(N=NRS, start=switch_time, finish=finish)
 
 
 if __name__ == '__main__':
 
-    GRS = GaussianRiemannSum(NGQ=10, start=1.0, finish=12.0)
+    GRS = GaussRiemannSum(NGQ=10, start=1.0, finish=12.0)
 
     def f(t):
         return np.cos(2*t) + 3
