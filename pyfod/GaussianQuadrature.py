@@ -12,11 +12,14 @@ import numpy as np
 class GaussianQuadrature:
 
     def __init__(self, N=5, start=0.0, finish=1.0):
-        self.description = 'Gaussian Quadrature'
+        self.description = 'Gaussian-Legendre Quadrature'
         h = (finish - start)/N
         self.points = self.gauss_points(N=N, h=h, start=start)
         self.weights = self.gauss_weights(N=N, h=h)
 
+    def integrate(self, f):
+        return (self.weights*f(self.points)).sum()
+    
     @classmethod
     def base_gauss_points(cls):
 
@@ -72,5 +75,5 @@ if __name__ == '__main__':
     def f(t):
         return np.cos(2*t) + 3
 
-    a = (GQ.weights*f(GQ.points)).sum()
+    a = GQ.integrate(f)
     print('a = {}'.format(a))
