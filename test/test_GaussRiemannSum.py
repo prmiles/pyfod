@@ -7,14 +7,14 @@ Created on Fri Jul 19 10:14:07 2018
 
 import numpy as np
 import unittest
-from pyfod.GaussianRiemannSum import GaussianRiemannSum
+from pyfod.GaussRiemannSum import GaussRiemannSum
 
 
 # --------------------------
 class Initialization(unittest.TestCase):
 
     def test_initialization(self):
-        GRS = GaussianRiemannSum(NGQ=10, start=1.0, finish=12.0)
+        GRS = GaussRiemannSum(NGQ=10, start=1.0, finish=12.0)
         gpts = GRS.GQ.base_gauss_points()
         mlgpts = np.array([0.069431844202974, 0.330009478207572,
                            0.669990521792428, 0.930568155797026])
