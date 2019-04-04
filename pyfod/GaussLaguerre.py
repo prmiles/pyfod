@@ -69,6 +69,14 @@ if __name__ == '__main__':  # pragma: no cover
     dt = 1e-6
     N = 24
 
+    def fcosnp(x):
+        return np.cos(2*x) + 3
+
+    GLag = GaussLaguerre(N=N, start=start, finish=finish,
+                         f=fcosnp, alpha=0, extend_precision=False)
+    F1 = GLag.integrate()
+    print('Int(cos(2t)+3) = {} ({})'.format(F1, 3.4546))
+    
     def fexp(x):
         return sp.exp(2*x)
     GLag = GaussLaguerre(N=N, start=start, finish=finish,
@@ -91,11 +99,3 @@ if __name__ == '__main__':  # pragma: no cover
     F2 = GLag.integrate()
     print('D[f(t)=cos(2t)] = {} ({})'.format(
             (F1-F2)/(dt*sp.gamma(1-0.9)), -1.779))
-
-    def fcosnp(x):
-        return np.cos(2*x) + 3
-
-    GLag = GaussLaguerre(N=N, start=start, finish=finish,
-                         f=fcosnp, alpha=0, extend_precision=False)
-    F1 = GLag.integrate()
-    print('Int(cos(2t)+3) = {} ({})'.format(F1, 3.4546))
