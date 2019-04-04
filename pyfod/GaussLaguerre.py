@@ -76,7 +76,7 @@ if __name__ == '__main__':  # pragma: no cover
                          f=fcosnp, alpha=0, extend_precision=False)
     F1 = GLag.integrate()
     print('Int(cos(2t)+3) = {} ({})'.format(F1, 3.4546))
-    
+
     def fexp(x):
         return sp.exp(2*x)
     GLag = GaussLaguerre(N=N, start=start, finish=finish,
