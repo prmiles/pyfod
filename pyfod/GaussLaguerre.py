@@ -17,6 +17,10 @@ class GaussLaguerre:
     def __init__(self, N=5, start=0.0, finish=1.0, alpha=0.0,
                  f=None, extend_precision=True, n_digits=30):
         self.description = 'Gaussian-Laguerre Quadrature'
+        self.start = start
+        self.finish = finish
+        self.alpha = alpha
+        self.f = f
         if extend_precision is False:
             points, weights = np.polynomial.laguerre.laggauss(deg=N)
             self.points = 1 - np.exp(-points)
@@ -29,14 +33,10 @@ class GaussLaguerre:
                     np.ones(shape=len(points))) - points.applyfunc(sp.exp)
             weights = sp.Array(weights)
         self.weights = weights
-        self.start = start
-        self.finish = finish
-        self.alpha = alpha
-        self.f = f
+        self.initial_weights = weights.copy()
+        self.update_weights(alpha=alpha)
 
-    def integrate(self, f=None, alpha=None):
-        if alpha is None:
-            alpha = self.alpha
+    def integrate(self, f=None):
         if f is None:
             f = self.f
         if f is None:
@@ -48,54 +48,87 @@ class GaussLaguerre:
             evalpoints = self.points.applyfunc(
                     lambda x: span*x + self.start)
             feval = evalpoints.applyfunc(f)
-            coef = self.points.applyfunc(
-                    lambda x: span**(1-alpha)*(1-x)**(-alpha))
             s = 0
-            for ii, (w, f, t) in enumerate(zip(self.weights, feval, coef)):
-                s += w*f*t
+            for ii, (w, f) in enumerate(zip(self.weights, feval)):
+                s += w*f
             return s
         else:
-            coef = span**(1-alpha)*(1-self.points)**(-alpha)
-            s = (self.weights*(coef*f(span*self.points + self.start))).sum()
+            s = (self.weights*(f(span*self.points + self.start))).sum()
             return s
+
+    def update_weights(self, alpha=None):
+        if alpha is None:
+            alpha = self.alpha
+        self.alpha = alpha
+        span = self.finish - self.start
+        # check if sympy
+        if isinstance(self.points, sp.Array):
+            coef = self.points.applyfunc(
+                    lambda x: span**(1-alpha)*(1-x)**(-alpha))
+            wtmp = []
+            for ii, (c, w) in enumerate(zip(coef, self.initial_weights)):
+                wtmp.append(c*w)
+            self.weights = sp.Array(wtmp)
+        else:
+            coef = span**(1-alpha)*(1-self.points)**(-alpha)
+            self.weights = self.initial_weights*coef
 
 
 if __name__ == '__main__':  # pragma: no cover
 
     n_digits = 50
-    alpha = 0.9
     start = 0.0
     finish = 1.0
-    dt = 1e-6
     N = 24
+    '''
+    Test normal precision
+    '''
+    # f(t) = exp(2t)
+
+    def fexpnp(x):
+        return np.exp(2*x)
 
     def fcosnp(x):
-        return np.cos(2*x) + 3
+        return np.cos(2*x)
 
+    # Test alpha = 0.0
+    alpha = 0.0
     GLag = GaussLaguerre(N=N, start=start, finish=finish,
-                         f=fcosnp, alpha=0, extend_precision=False)
+                         f=fexpnp, alpha=alpha, extend_precision=False)
     F1 = GLag.integrate()
-    print('Int(cos(2t)+3) = {} ({})'.format(F1, 3.4546))
+    F2 = GLag.integrate(f=fcosnp)
+    print('Int(exp(2t)/(1-t)^{}) = {} ({})'.format(alpha, F1, 3.19453))
+    print('Int(cos(2t)/(1-t)^{}) = {} ({})'.format(alpha, F2, 0.454649))
+
+    '''
+    Test extended precision
+    '''
 
     def fexp(x):
         return sp.exp(2*x)
-    GLag = GaussLaguerre(N=N, start=start, finish=finish,
-                         f=fexp, alpha=alpha, n_digits=n_digits)
-    F1 = GLag.integrate()
-    GLag = GaussLaguerre(N=N, start=start, finish=finish-dt,
-                         f=fexp, alpha=alpha, n_digits=n_digits)
-    F2 = GLag.integrate()
-    print('D[f(t)=exp(2t)] = {} ({})'.format(
-            (F1-F2)/(dt*sp.gamma(1-0.9)), 13.815))
 
     def fcos(x):
         return sp.cos(2*x)
 
+    # Test alpha = 0.0
+    alpha = 0.0
     GLag = GaussLaguerre(N=N, start=start, finish=finish,
-                         f=fcos, alpha=alpha, n_digits=n_digits)
-    F1 = GLag.integrate()
-    GLag = GaussLaguerre(N=N, start=start, finish=finish-dt,
-                         f=fcos, alpha=alpha, n_digits=n_digits)
-    F2 = GLag.integrate()
-    print('D[f(t)=cos(2t)] = {} ({})'.format(
-            (F1-F2)/(dt*sp.gamma(1-0.9)), -1.779))
+                         alpha=alpha, n_digits=n_digits)
+    F1 = GLag.integrate(f=fexp)
+    F2 = GLag.integrate(f=fcos)
+    print('Int(exp(2t)/(1-t)^{}) = {} ({})'.format(alpha, F1, 3.19453))
+    print('Int(cos(2t)/(1-t)^{}) = {} ({})'.format(alpha, F2, 0.454649))
+    # Test alpha = 0.1
+    alpha = 0.1
+    GLag.update_weights(alpha=alpha)
+    F1 = GLag.integrate(f=fexp)
+    F2 = GLag.integrate(f=fcos)
+    print('Int(exp(2t)/(1-t)^{}) = {} ({})'.format(alpha, F1, 3.749))
+    print('Int(cos(2t)/(1-t)^{}) = {} ({})'.format(alpha, F2, 0.457653))
+    # Test alpha = 0.9
+    alpha = 0.9
+    GLag.update_weights(alpha=alpha)
+    F1 = GLag.integrate(f=fexp)
+    F2 = GLag.integrate(f=fcos)
+    print('Int(exp(2t)/(1-t)^{}) = {} ({})'.format(alpha, F1, 65.2162))
+    print('Int(cos(2t)/(1-t)^{}) = {} ({})'.format(alpha, F2, -2.52045))

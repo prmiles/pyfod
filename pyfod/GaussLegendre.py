@@ -5,19 +5,29 @@ Created on Mon Mar 11 17:12:41 2019
 
 @author: prmiles
 """
-
+import sys
 import numpy as np
+from utilities import check_alpha
 
 
 class GaussLegendre:
 
-    def __init__(self, N=5, start=0.0, finish=1.0):
+    def __init__(self, N=5, start=0.0, finish=1.0, alpha=0.0, f=None):
         self.description = 'Gaussian-Legendre Quadrature'
+        check_alpha(alpha)
         h = (finish - start)/N
+        self.alpha = alpha
+        self.finish = finish
         self.points = self.gauss_points(N=N, h=h, start=start)
         self.weights = self.gauss_weights(N=N, h=h)
+        self.initial_weights = self.weights.copy()
+        self.update_weights(alpha=alpha)
 
-    def integrate(self, f):
+    def integrate(self, f=None):
+        if f is None:
+            f = self.f
+        if f is None:
+            sys.exit('No function defined... provide function f')
         return (self.weights*f(self.points)).sum()
 
     @classmethod
@@ -67,13 +77,46 @@ class GaussLegendre:
             weights = np.concatenate((weights, w))
         return weights
 
+    def update_weights(self, alpha=None):
+        if alpha is None:
+            alpha = self.alpha
+        self.alpha = alpha
+        # update weights based on alpha
+        self.weights = self.initial_weights*(
+                self.finish - self.points)**(-alpha)
+
 
 if __name__ == '__main__':  # pragma: no cover
 
-    GQ = GaussLegendre(N=10, start=1.0, finish=12.0)
+    start = 0.0
+    finish = 1.0
+    N = 2400
+    GQ = GaussLegendre(N=N, start=start, finish=finish)
 
-    def f(t):
-        return np.cos(2*t) + 3
+    def fexp(x):
+        return np.exp(2*x)
 
-    a = GQ.integrate(f)
-    print('a = {}'.format(a))
+    def fcos(x):
+        return np.cos(2*x)
+
+    # Test alpha = 0.0
+    alpha = 0.0
+    GLeg = GaussLegendre(N=N, start=start, finish=finish, alpha=alpha)
+    F1 = GLeg.integrate(f=fexp)
+    F2 = GLeg.integrate(f=fcos)
+    print('Int(exp(2t)/(1-t)^{}) = {} ({})'.format(alpha, F1, 3.19453))
+    print('Int(cos(2t)/(1-t)^{}) = {} ({})'.format(alpha, F2, 0.454649))
+    # Test alpha = 0.1
+    alpha = 0.1
+    GLeg.update_weights(alpha=alpha)
+    F1 = GLeg.integrate(f=fexp)
+    F2 = GLeg.integrate(f=fcos)
+    print('Int(exp(2t)/(1-t)^{}) = {} ({})'.format(alpha, F1, 3.749))
+    print('Int(cos(2t)/(1-t)^{}) = {} ({})'.format(alpha, F2, 0.457653))
+    # Test alpha = 0.9
+    alpha = 0.9
+    GLeg.update_weights(alpha=alpha)
+    F1 = GLeg.integrate(f=fexp)
+    F2 = GLeg.integrate(f=fcos)
+    print('Int(exp(2t)/(1-t)^{}) = {} ({})'.format(alpha, F1, 65.2162))
+    print('Int(cos(2t)/(1-t)^{}) = {} ({})'.format(alpha, F2, -2.52045))
