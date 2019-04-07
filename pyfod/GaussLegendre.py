@@ -7,7 +7,7 @@ Created on Mon Mar 11 17:12:41 2019
 """
 import sys
 import numpy as np
-from utilities import check_alpha
+from .utilities import check_alpha
 
 
 class GaussLegendre:

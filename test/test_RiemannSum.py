@@ -46,8 +46,3 @@ class RiemannSumTesting(unittest.TestCase):
         self.different_alphas(alpha=0.0)
         self.different_alphas(alpha=0.5)
         self.different_alphas(alpha=0.99)
-        
-    def test_check_alpha(self):
-        RS = RiemannSum()
-        with self.assertRaises(SystemExit):
-            RS.check_alpha(alpha=1.0)

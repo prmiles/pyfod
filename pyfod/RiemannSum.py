@@ -7,7 +7,7 @@ Created on Mon Mar 25 15:00:01 2019
 """
 import sys
 import numpy as np
-from utilities import check_alpha
+from .utilities import check_alpha
 
 
 class RiemannSum(object):

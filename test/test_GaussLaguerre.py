@@ -77,7 +77,7 @@ class Integrate_non_extended(unittest.TestCase):
 
     def test_with_alpha(self):
         GQ = GaussLaguerre(extend_precision=False)
-        a = GQ.integrate(f=f, alpha=0.5)
+        a = GQ.integrate(f=f)
         self.assertEqual(a.size, 1, msg='Expect float return')
 
 
@@ -96,5 +96,5 @@ class Integrate_with_extended(unittest.TestCase):
 
     def test_with_alpha(self):
         GQ = GaussLaguerre()
-        a = GQ.integrate(f=fsp, alpha=0.5)
+        a = GQ.integrate(f=fsp)
         self.assertTrue(a.is_Float, msg='Expect float return')
