@@ -7,9 +7,9 @@ Created on Mon Mar 11 17:12:41 2019
 """
 
 import numpy as np
-import sys
 from sympy.integrals.quadrature import gauss_gen_laguerre as sp_gauss_laguerre
 import sympy as sp
+from pyfod.utilities import check_function
 
 
 class GaussLaguerre:
@@ -37,10 +37,8 @@ class GaussLaguerre:
         self.update_weights(alpha=alpha)
 
     def integrate(self, f=None):
-        if f is None:
-            f = self.f
-        if f is None:
-            sys.exit('No function defined... provide function f')
+        f = check_function(f, self.f)
+        self.f = f
         # transform kernel
         span = self.finish - self.start
         # check if sympy
