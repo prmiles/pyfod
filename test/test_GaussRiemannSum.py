@@ -10,20 +10,31 @@ import unittest
 from pyfod.GaussRiemannSum import GaussRiemannSum
 
 
+def f(t):
+    return np.exp(2*t)
+
+
 # --------------------------
-class Initialization(unittest.TestCase):
+class GaussRiemannSumTesting(unittest.TestCase):
 
-    def test_initialization(self):
-        GRS = GaussRiemannSum(NGQ=10, start=1.0, finish=12.0)
-        gpts = GRS.GQ.base_gauss_points()
-        mlgpts = np.array([0.069431844202974, 0.330009478207572,
-                           0.669990521792428, 0.930568155797026])
-        self.assertEqual(gpts.size, 4, msg='Expect 4 elements')
-        self.assertEqual(gpts.shape, (4,), msg='Expect shape = (4,)')
-        self.assertTrue(np.allclose(gpts, mlgpts),
-                        msg=str('Expect arrays to match: {} neq {}'.format(
-                                gpts,
-                                mlgpts)))
+    def test_init(self):
+        Q = GaussRiemannSum(start=1.0, finish=12.0)
+        attributes = ['GQ', 'RS', 'f', 'alpha', 'description']
+        for att in attributes:
+            self.assertTrue(hasattr(Q, att),
+                            msg=str('Missing {} attribute'.format(att)))
 
+    def test_update_weights(self):
+        Q = GaussRiemannSum(start=1.0, finish=12.0)
+        Q.GQ.weights = []
+        Q.RS.weights = []
+        Q.update_weights(alpha=0.0)
+        self.assertTrue(isinstance(Q.GQ.weights, np.ndarray),
+                        msg='Weights should be updated.')
+        self.assertTrue(isinstance(Q.RS.weights, np.ndarray),
+                        msg='Weights should be updated.')
 
-
+    def test_integrate(self):
+        Q = GaussRiemannSum(start=0.0, finish=1.0)
+        a = Q.integrate(f=f)
+        self.assertTrue(isinstance(a, float), msg='Expect float')
