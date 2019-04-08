@@ -4,7 +4,7 @@ import sys
 import numpy as np
 from scipy.special import gamma as sc_gamma
 import sympy as sp
-from GaussRiemannSum import GaussRiemannSum
+from GaussLegendreRiemannSum import GaussLegendreRiemannSum
 from pyfod.GaussLegendre import GaussLegendre
 from pyfod.GaussLaguerre import GaussLaguerre
 from pyfod.RiemannSum import RiemannSum
@@ -33,7 +33,7 @@ def fdc(f, start, finish, dt=1e-4, alpha=0.0, quadrature='GLegRS', **kwargs):
 
 def select_quadrature_method(quadrature):
     methods = dict(
-            GLegRS=GaussRiemannSum,
+            GLegRS=GaussLegendreRiemannSum,
             GLag=GaussLaguerre,
             GLeg=GaussLegendre,
             RS=RiemannSum
@@ -57,28 +57,20 @@ if __name__ == '__main__':  # pragma: no cover
     def fexp(t):
         return np.exp(2*t)
 
-    f = fexp
-    # Check Gauss-Legendre, Riemann-Sum
-    dft = fdc(quadrature='GLegRS', f=f, start=0.0, finish=1.0,
-              alpha=0.9, dt=1e-6, NGQ=10, NRS=20)
-    print(dft['fd'])
-    # Check Riemann-Sum
-    dft = fdc(quadrature='RS', f=f, start=0.0, finish=1.0,
-              alpha=0.9, dt=1e-4, N=32)
-    print(dft['fd'])
-    # Check Gauss-Legendre
-    dft = fdc(quadrature='GLeg', f=f, start=0.0, finish=1.0,
-              alpha=0.9, dt=1e-4, N=32)
-    print(dft['fd'])
-    # Check Gauss-Laguerre.  Redefine functions with extended precision.
 
-    def gcos(t):
-        return sp.cos(2*t)
-
-    def gexp(t):
-        return sp.exp(2*t)
-
-    g = gexp
-    dft = fdc(quadrature='GLag', f=g, start=0.0, finish=1.0,
-              alpha=0.9, dt=1e-4, N=24, n_digits=50, extend_precision=True)
-    print(dft['fd'])
+    start = 0.0
+    finish = 1.0
+    dt = 1e-6
+    NRS = 1000
+    # Test alpha = 0.0
+    alpha = 0.0
+    out = fdc(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt, NRS=NRS)
+    print('D^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.38906))
+    # Test alpha = 0.1
+    alpha = 0.1
+    out = fdc(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt, NRS=NRS)
+    print('D^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.95224))
+    # Test alpha = 0.9
+    alpha = 0.9
+    out = fdc(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt, NRS=NRS)
+    print('D^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 13.8153))
