@@ -58,7 +58,7 @@ if __name__ == '__main__':  # pragma: no cover
     # Test alpha = 0.0
     alpha = 0.0
     GRS = GaussLegendreRiemannSum(pGQ=pGQ, NGQ=NGQ, NRS=NRS, start=start,
-                          finish=finish)
+                                  finish=finish)
     F1 = GRS.integrate(f=fexp)
     F2 = GRS.integrate(f=fcos)
     print('Int(exp(2t)/(1-t)^{}) = {} ({})'.format(alpha, F1, 3.19453))
