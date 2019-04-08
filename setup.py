@@ -30,7 +30,7 @@ setup(
     package_dir={'pyfod': 'pyfod'},
     packages=find_packages(),
     zip_safe=False,
-    install_requires=['numpy>=1.14', 'scipy>=1.0'],
+    install_requires=['numpy>=1.14', 'scipy>=1.0', 'sympy>=1.3'],
     extras_require = {'docs':['sphinx']},
     classifiers=['License :: OSI Approved :: MIT License',
                    'Natural Language :: English',
