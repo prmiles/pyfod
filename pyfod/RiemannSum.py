@@ -25,6 +25,7 @@ class RiemannSum(object):
     def update_weights(self, alpha=None):
         if alpha is None:
             alpha = self.alpha
+        check_alpha(alpha=alpha)
         self.alpha = alpha
         self.weights = self._rs_weights(grid=self.grid, alpha=alpha)
 
