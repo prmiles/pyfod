@@ -12,7 +12,7 @@ from pyfod.utilities import check_function
 import numpy as np
 
 
-class GaussRiemannSum(object):
+class GaussLegendreRiemannSum(object):
 
     def __init__(self, NGQ=5, NRS=20, pGQ=0.9,
                  start=0.0, finish=1.0, alpha=0.0, f=None):
@@ -57,7 +57,7 @@ if __name__ == '__main__':  # pragma: no cover
 
     # Test alpha = 0.0
     alpha = 0.0
-    GRS = GaussRiemannSum(pGQ=pGQ, NGQ=NGQ, NRS=NRS, start=start,
+    GRS = GaussLegendreRiemannSum(pGQ=pGQ, NGQ=NGQ, NRS=NRS, start=start,
                           finish=finish)
     F1 = GRS.integrate(f=fexp)
     F2 = GRS.integrate(f=fcos)
