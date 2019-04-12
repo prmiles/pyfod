@@ -64,20 +64,44 @@ if __name__ == '__main__':  # pragma: no cover
     finish = 1.0
     dt = 1e-6
     NRS = 1000
+    NGLeg = 5
+    print('Testing quadrature method: GLegRS')
     # Test alpha = 0.0
     alpha = 0.0
-    out = fdc(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt, NRS=NRS)
+    out = fdc(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt,
+              NGLeg=NGLeg, NRS=NRS)
     print('D^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.38906))
     # Test alpha = 0.1
     alpha = 0.1
-    out = fdc(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt, NRS=NRS)
+    out = fdc(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt,
+              NGLeg=NGLeg, NRS=NRS)
     print('D^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.95224))
     # Test alpha = 0.9
     alpha = 0.9
-    out = fdc(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt, NRS=NRS)
+    out = fdc(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt,
+              NGLeg=NGLeg, NRS=NRS)
+    print('D^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 13.8153))
+
+    # Test - Riemann Quadrature
+    print('Testing quadrature method: RS')
+    # Test alpha = 0.0
+    alpha = 0.0
+    out = fdc(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt,
+              quadrature='rs', N=NRS)
+    print('D^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.38906))
+    # Test alpha = 0.1
+    alpha = 0.1
+    out = fdc(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt,
+              quadrature='rs', N=NRS)
+    print('D^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.95224))
+    # Test alpha = 0.9
+    alpha = 0.9
+    out = fdc(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt,
+              quadrature='rs', N=NRS)
     print('D^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 13.8153))
 
     # Test Extended Precision - Gauss Laguerre Quadrature
+    print('Testing quadrature method: GLag')
     # Test alpha = 0.0
     alpha = 0.0
     out = fdc(f=fspexp, alpha=alpha, start=start, finish=finish, dt=dt,
