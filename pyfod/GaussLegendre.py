@@ -9,6 +9,7 @@ Created on Mon Mar 11 17:12:41 2019
 import numpy as np
 from pyfod.utilities import check_alpha
 from pyfod.utilities import check_function, check_singularity
+from pyfod.utilities import check_node_type
 
 
 class GaussLegendre:
@@ -17,9 +18,11 @@ class GaussLegendre:
                  alpha=0.0, f=None, singularity=None):
         self.description = 'Gaussian-Legendre Quadrature'
         check_alpha(alpha)
+        N = check_node_type(N)
         h = (finish - start)/N
         self.alpha = alpha
         self.f = f
+        self.N = N
         self.finish = finish
         self.singularity = check_singularity(singularity, self.finish)
         self.points = self._gauss_points(N=N, h=h, start=start)

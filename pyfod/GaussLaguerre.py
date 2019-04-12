@@ -9,7 +9,7 @@ Created on Mon Mar 11 17:12:41 2019
 import numpy as np
 from sympy.integrals.quadrature import gauss_gen_laguerre as sp_gauss_laguerre
 import sympy as sp
-from pyfod.utilities import check_function
+from pyfod.utilities import check_function, check_node_type
 
 
 class GaussLaguerre:
@@ -17,9 +17,11 @@ class GaussLaguerre:
     def __init__(self, N=5, start=0.0, finish=1.0, alpha=0.0,
                  f=None, extend_precision=True, n_digits=30):
         self.description = 'Gaussian-Laguerre Quadrature'
+        N = check_node_type(N)
         self.start = start
         self.finish = finish
         self.alpha = alpha
+        self.N = N
         self.f = f
         if extend_precision is False:
             points, weights = np.polynomial.laguerre.laggauss(deg=N)
