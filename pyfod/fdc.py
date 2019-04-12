@@ -5,6 +5,7 @@ import numpy as np
 import sympy as sp
 from scipy.special import gamma as sc_gamma
 from pyfod.GaussLegendreRiemannSum import GaussLegendreRiemannSum
+from pyfod.GaussLegendreGaussLaguerre import GaussLegendreGaussLaguerre
 from pyfod.GaussLegendre import GaussLegendre
 from pyfod.GaussLaguerre import GaussLaguerre
 from pyfod.RiemannSum import RiemannSum
@@ -34,6 +35,7 @@ def fdc(f, start, finish, dt=1e-4, alpha=0.0, quadrature='GLegRS', **kwargs):
 def select_quadrature_method(quadrature):
     methods = dict(
             glegrs=GaussLegendreRiemannSum,
+            glegglag=GaussLegendreGaussLaguerre,
             glag=GaussLaguerre,
             gleg=GaussLegendre,
             rs=RiemannSum
