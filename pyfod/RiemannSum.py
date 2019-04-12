@@ -8,7 +8,7 @@ Created on Mon Mar 25 15:00:01 2019
 
 import numpy as np
 from pyfod.utilities import check_alpha
-from pyfod.utilities import check_function
+from pyfod.utilities import check_function, check_node_type
 
 
 class RiemannSum(object):
@@ -16,8 +16,10 @@ class RiemannSum(object):
     def __init__(self, N=5, start=0.0, finish=1.0, alpha=0.0, f=None):
         self.description = 'Riemann-Sum'
         check_alpha(alpha=alpha)
+        N = check_node_type(N)
         self.alpha = alpha
         self.f = f
+        self.N = N
         self.grid = self._rs_grid(start, finish, N)
         self.points = self._rs_points(grid=self.grid)
         self.weights = self._rs_weights(grid=self.grid, alpha=alpha)
