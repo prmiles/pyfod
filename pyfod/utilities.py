@@ -31,3 +31,7 @@ def check_singularity(singularity, finish):
         return finish
     else:
         return singularity
+
+
+def check_node_type(N):
+    return int(N)
