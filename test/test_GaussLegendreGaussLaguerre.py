@@ -38,8 +38,8 @@ class GaussLegendreLaguerreTesting(unittest.TestCase):
         Q.update_weights(alpha=0.0)
         self.assertTrue(isinstance(Q.GLeg.weights, np.ndarray),
                         msg='Weights should be updated.')
-        self.assertFalse(isinstance(Q.GLag.weights,
-                                   np.ndarray),
+        self.assertTrue(isinstance(Q.GLag.weights,
+                                   object),
                         msg='Weights should be updated.')
 
     def test_integrate(self):
