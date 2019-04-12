@@ -34,3 +34,10 @@ class Utilities(unittest.TestCase):
         self.assertEqual(a, 1.0, msg='Expect finish')
         a = ut.check_singularity(singularity=0.5, finish=1.0)
         self.assertEqual(a, 0.5, msg='Expect user defined')
+
+    def test_check_node_type(self):
+        a = ut.check_node_type(N=1)
+        self.assertEqual(a, 1, msg='Expect 1')
+        self.assertTrue(isinstance(a, int), msg='Expect int')
+        a = ut.check_node_type(N=1.0)
+        self.assertTrue(isinstance(a, int), msg='Expect int')
