@@ -21,12 +21,12 @@ class GaussLegendreGaussLaguerre(object):
         # setup GLeg points/weights
         switch_time = (finish - start)*pGLeg
         self.GLeg = GaussLegendre(N=NGLeg, start=start, finish=switch_time,
-                                alpha=alpha, singularity=finish, f=f)
+                                  alpha=alpha, singularity=finish, f=f)
         # setup GLag points/weights
         self.GLag = GaussLaguerre(N=NGLag, start=switch_time,
-                             finish=finish, alpha=alpha, f=f,
-                             extend_precision=extend_precision,
-                             n_digits=n_digits)
+                                  finish=finish, alpha=alpha, f=f,
+                                  extend_precision=extend_precision,
+                                  n_digits=n_digits)
         self.alpha = alpha
         self.pGLeg = pGLeg
         self.f = f

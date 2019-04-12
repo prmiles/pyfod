@@ -20,7 +20,7 @@ class GaussLegendreRiemannSum(object):
         # setup GQ points/weights
         switch_time = (finish - start)*pGLeg
         self.GLeg = GaussLegendre(N=NGLeg, start=start, finish=switch_time,
-                                alpha=alpha, singularity=finish, f=f)
+                                  alpha=alpha, singularity=finish, f=f)
         # setup RS points/weights
         self.RS = RiemannSum(N=NRS, start=switch_time,
                              finish=finish, alpha=alpha, f=f)

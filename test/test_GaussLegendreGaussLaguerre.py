@@ -22,7 +22,7 @@ def f(t):
 
 
 # --------------------------
-class GaussRiemannSumTesting(unittest.TestCase):
+class GaussLegendreLaguerreTesting(unittest.TestCase):
 
     def test_init(self):
         Q = GaussLegendreGaussLaguerre(start=1.0, finish=12.0)
