@@ -19,17 +19,17 @@ class GaussRiemannSumTesting(unittest.TestCase):
 
     def test_init(self):
         Q = GaussLegendreRiemannSum(start=1.0, finish=12.0)
-        attributes = ['GQ', 'RS', 'f', 'alpha', 'description']
+        attributes = ['GLeg', 'RS', 'f', 'alpha', 'description']
         for att in attributes:
             self.assertTrue(hasattr(Q, att),
                             msg=str('Missing {} attribute'.format(att)))
 
     def test_update_weights(self):
         Q = GaussLegendreRiemannSum(start=1.0, finish=12.0)
-        Q.GQ.weights = []
+        Q.GLeg.weights = []
         Q.RS.weights = []
         Q.update_weights(alpha=0.0)
-        self.assertTrue(isinstance(Q.GQ.weights, np.ndarray),
+        self.assertTrue(isinstance(Q.GLeg.weights, np.ndarray),
                         msg='Weights should be updated.')
         self.assertTrue(isinstance(Q.RS.weights, np.ndarray),
                         msg='Weights should be updated.')

@@ -19,8 +19,8 @@ class GaussLegendreRiemannSum(object):
         self.description = 'Gaussian Quadrature, Riemann-Sum'
         # setup GQ points/weights
         switch_time = (finish - start)*pGLeg
-        self.GQ = GaussLegendre(N=NGLeg, start=start, finish=switch_time,
-                                alpha=alpha, singularity=finish, f=f)
+        self.GLeg = GaussLegendre(N=NGLeg, start=start, finish=switch_time,
+                                  alpha=alpha, singularity=finish, f=f)
         # setup RS points/weights
         self.RS = RiemannSum(N=NRS, start=switch_time,
                              finish=finish, alpha=alpha, f=f)
@@ -31,13 +31,13 @@ class GaussLegendreRiemannSum(object):
     def integrate(self, f=None):
         f = check_function(f, self.f)
         self.f = f
-        return self.GQ.integrate(f=f) + self.RS.integrate(f=f)
+        return self.GLeg.integrate(f=f) + self.RS.integrate(f=f)
 
     def update_weights(self, alpha=None):
         if alpha is None:
             alpha = self.alpha
         self.alpha = alpha
-        self.GQ.update_weights(alpha=alpha)
+        self.GLeg.update_weights(alpha=alpha)
         self.RS.update_weights(alpha=alpha)
 
 
