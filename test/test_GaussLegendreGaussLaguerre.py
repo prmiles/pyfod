@@ -39,7 +39,7 @@ class GaussLegendreLaguerreTesting(unittest.TestCase):
         self.assertTrue(isinstance(Q.GLeg.weights, np.ndarray),
                         msg='Weights should be updated.')
         self.assertTrue(isinstance(Q.GLag.weights,
-                                   sp.tensor.array.dense_ndim_array.ImmutableDenseNDimArray),
+                                   sp.tensor.ImmutableDenseNDimArray),
                         msg='Weights should be updated.')
 
     def test_integrate(self):
