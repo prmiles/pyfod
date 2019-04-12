@@ -14,18 +14,18 @@ import numpy as np
 
 class GaussLegendreRiemannSum(object):
 
-    def __init__(self, NGQ=5, NRS=20, pGQ=0.9,
+    def __init__(self, NGLeg=5, NRS=20, pGLeg=0.9,
                  start=0.0, finish=1.0, alpha=0.0, f=None):
         self.description = 'Gaussian Quadrature, Riemann-Sum'
         # setup GQ points/weights
-        switch_time = (finish - start)*pGQ
-        self.GQ = GaussLegendre(N=NGQ, start=start, finish=switch_time,
+        switch_time = (finish - start)*pGLeg
+        self.GQ = GaussLegendre(N=NGLeg, start=start, finish=switch_time,
                                 alpha=alpha, singularity=finish, f=f)
         # setup RS points/weights
         self.RS = RiemannSum(N=NRS, start=switch_time,
                              finish=finish, alpha=alpha, f=f)
         self.alpha = alpha
-        self.pGQ = pGQ
+        self.pGLeg = pGLeg
         self.f = f
 
     def integrate(self, f=None):
@@ -45,9 +45,9 @@ if __name__ == '__main__':  # pragma: no cover
 
     start = 0.0
     finish = 1.0
-    NGQ = 100
+    NGLeg = 100
     NRS = 2400
-    pGQ = 0.95
+    pGLeg = 0.95
 
     def fexp(x):
         return np.exp(2*x)
@@ -57,8 +57,8 @@ if __name__ == '__main__':  # pragma: no cover
 
     # Test alpha = 0.0
     alpha = 0.0
-    GRS = GaussLegendreRiemannSum(pGQ=pGQ, NGQ=NGQ, NRS=NRS, start=start,
-                                  finish=finish)
+    GRS = GaussLegendreRiemannSum(pGLeg=pGLeg, NGLeg=NGLeg, NRS=NRS,
+                                  start=start, finish=finish)
     F1 = GRS.integrate(f=fexp)
     F2 = GRS.integrate(f=fcos)
     print('Int(exp(2t)/(1-t)^{}) = {} ({})'.format(alpha, F1, 3.19453))
