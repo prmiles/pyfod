@@ -41,3 +41,11 @@ class Utilities(unittest.TestCase):
         self.assertTrue(isinstance(a, int), msg='Expect int')
         a = ut.check_node_type(N=1.0)
         self.assertTrue(isinstance(a, int), msg='Expect int')
+
+    def test_check_values(self):
+        with self.assertRaises(SystemExit):
+            ut.check_value(None, None)
+        a = ut.check_value(value=f, default_value=None)
+        self.assertEqual(a, f, msg='Expect user defined return')
+        a = ut.check_value(value=None, default_value=f)
+        self.assertEqual(a, f, msg='Expect default return')

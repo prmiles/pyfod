@@ -26,6 +26,15 @@ def check_function(f, default_f):
     return f
 
 
+def check_value(value, default_value, varname=None):
+    if value is None:
+        value = default_value
+    if value is None:
+        sys.exit(str('No value defined... provide \
+                     value for {}'.format(varname)))
+    return value
+
+
 def check_singularity(singularity, finish):
     if singularity is None:
         return finish
