@@ -22,7 +22,7 @@ def check_function(f, default_f):
     if f is None:
         f = default_f
     if f is None:
-        sys.exit('No function defined... provide function f')
+        sys.exit('No function defined. Provide function f')
     return f
 
 
@@ -30,9 +30,14 @@ def check_value(value, default_value, varname=None):
     if value is None:
         value = default_value
     if value is None:
-        sys.exit(str('No value defined... provide \
+        sys.exit(str('No value defined. Provide \
                      value for {}'.format(varname)))
     return value
+
+
+def check_input(value, varname=None):
+    if value is None:
+        sys.exit(str('No value defined. Provide value for {}.'.format(varname)))
 
 
 def check_singularity(singularity, finish):

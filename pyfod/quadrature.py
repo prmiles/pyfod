@@ -6,6 +6,7 @@ from pyfod.utilities import check_function, check_singularity
 from pyfod.utilities import check_node_type
 
 
+# ---------------------
 class GaussLegendre:
 
     def __init__(self, N=5, start=0.0, finish=1.0,
@@ -85,6 +86,7 @@ class GaussLegendre:
         return weights
 
 
+# ---------------------
 class GaussLaguerre:
 
     def __init__(self, N=5, start=0.0, finish=1.0, alpha=0.0,
@@ -147,6 +149,7 @@ class GaussLaguerre:
             self.weights = self.initial_weights*coef
 
 
+# ---------------------
 class RiemannSum(object):
 
     def __init__(self, N=5, start=0.0, finish=1.0, alpha=0.0, f=None):
@@ -189,6 +192,7 @@ class RiemannSum(object):
         return -1/(1-alpha)*(term2 - term3)
 
 
+# ---------------------
 class GaussLegendreRiemannSum(object):
 
     def __init__(self, NGLeg=5, NRS=20, pGLeg=0.9,
@@ -218,6 +222,7 @@ class GaussLegendreRiemannSum(object):
         self.RS.update_weights(alpha=alpha)
 
 
+# ---------------------
 class GaussLegendreGaussLaguerre(object):
 
     def __init__(self, NGLeg=5, NGLag=20, pGLeg=0.9,
