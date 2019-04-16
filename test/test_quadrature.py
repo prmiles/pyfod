@@ -108,14 +108,16 @@ class GaussLaguerreTesting(unittest.TestCase):
                             msg=str('Missing {} attribute'.format(att)))
 
     def test_update_weights(self):
-        Q = qm.GaussLaguerre(N=10, start=1.0, finish=12.0, extend_precision=False)
+        Q = qm.GaussLaguerre(N=10, start=1.0, finish=12.0,
+                             extend_precision=False)
         Q.weights = []
         Q.update_weights(alpha=0.0)
         self.assertTrue(isinstance(Q.weights, np.ndarray),
                         msg='Weights should be updated.')
 
     def test_integrate(self):
-        Q = qm.GaussLaguerre(N=10, start=0.0, finish=1.0, extend_precision=False)
+        Q = qm.GaussLaguerre(N=10, start=0.0, finish=1.0,
+                             extend_precision=False)
         a = Q.integrate(f=self.f)
         self.assertTrue(isinstance(a, float), msg='Expect float')
 
@@ -129,7 +131,7 @@ class Initialization_non_extended(unittest.TestCase):
 
     def test_init(self):
         GQ = qm.GaussLaguerre(N=10, start=1.0, finish=12.0,
-                           extend_precision=False)
+                              extend_precision=False)
         self.assertTrue(hasattr(GQ, 'f'), msg='Expect attribute f to exist')
         self.assertEqual(GQ.f, None, msg='Expect value of None')
         self.assertEqual(GQ.points.size, 10, msg='Expect 10 nodes')
@@ -138,7 +140,7 @@ class Initialization_non_extended(unittest.TestCase):
 
     def test_init_with_f(self):
         GQ = qm.GaussLaguerre(N=10, start=1.0, finish=12.0, alpha=0.5,
-                           f=self.f, extend_precision=False)
+                              f=self.f, extend_precision=False)
         self.assertTrue(hasattr(GQ, 'f'), msg='Expect attribute f to exist')
         self.assertEqual(GQ.f, self.f, msg='Expect function f')
         self.assertEqual(GQ.points.size, 10, msg='Expect 10 nodes')
@@ -162,7 +164,8 @@ class Initialization_with_extended(unittest.TestCase):
         self.assertEqual(GQ.alpha, 0, msg='Expect alpha eq 0')
 
     def test_init_with_f(self):
-        GQ = qm.GaussLaguerre(N=10, start=1.0, finish=12.0, alpha=0.5, f=self.fsp)
+        GQ = qm.GaussLaguerre(N=10, start=1.0, finish=12.0,
+                              alpha=0.5, f=self.fsp)
         self.assertTrue(hasattr(GQ, 'f'), msg='Expect attribute f to exist')
         self.assertEqual(GQ.f, self.fsp, msg='Expect function fsp')
         self.assertEqual(len(GQ.points), 10, msg='Expect 10 nodes')
@@ -197,7 +200,7 @@ class Integrate_non_extended(unittest.TestCase):
 class Integrate_with_extended(unittest.TestCase):
 
     @classmethod
-    def fsp(t):
+    def fsp(cls, t):
         return sp.cos(t)
 
     def test_no_f(self):
@@ -208,12 +211,12 @@ class Integrate_with_extended(unittest.TestCase):
     def test_with_f(self):
         GQ = qm.GaussLaguerre()
         a = GQ.integrate(f=self.fsp)
-        self.assertTrue(a.is_Float, msg='Expect float return')
+        self.assertTrue(a.is_Float, msg='Expect sympy float return')
 
     def test_with_alpha(self):
         GQ = qm.GaussLaguerre()
         a = GQ.integrate(f=self.fsp)
-        self.assertTrue(a.is_Float, msg='Expect float return')
+        self.assertTrue(a.is_Float, msg='Expect sympy float return')
 
 
 # --------------------------
@@ -289,7 +292,7 @@ class GaussLegendreLaguerreTesting(unittest.TestCase):
     def f(cls, t):
         try:
             tmp = np.exp(2*t)
-        except:
+        except AttributeError:
             tmp = sp.exp(2*t)
         return tmp
 
@@ -317,7 +320,7 @@ class GaussLegendreLaguerreTesting(unittest.TestCase):
         self.assertTrue(isinstance(a, object),
                         msg='Expect object if extended')
         Q = qm.GaussLegendreGaussLaguerre(start=0.0, finish=1.0,
-                                       extend_precision=False)
+                                          extend_precision=False)
         a = Q.integrate(f=self.f)
         self.assertTrue(isinstance(a, float),
                         msg='Expect float if not extended')
@@ -325,6 +328,10 @@ class GaussLegendreLaguerreTesting(unittest.TestCase):
 
 # --------------------------
 class GaussRiemannSumTesting(unittest.TestCase):
+
+    @classmethod
+    def f(cls, t):
+        return np.exp(2*t)
 
     def test_init(self):
         Q = qm.GaussLegendreRiemannSum(start=1.0, finish=12.0)
