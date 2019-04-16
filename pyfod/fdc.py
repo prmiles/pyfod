@@ -34,7 +34,8 @@ def fdc(f, start, finish, dt=1e-4, alpha=0.0, quadrature='GLegRS', **kwargs):
     return dict(fd=fd, I1=I1, I2=I2, Q1=Q1, Q2=Q2)
 
 
-def caputo(f, start, finish, dt=1e-4, alpha=0.0, df=None, quadrature='GLegRS', **kwargs):
+def caputo(f, start, finish, dt=1e-4, alpha=0.0,
+           df=None, quadrature='GLegRS', **kwargs):
     '''
     Caputo Fractional Derivative Calculator
     '''
@@ -42,8 +43,8 @@ def caputo(f, start, finish, dt=1e-4, alpha=0.0, df=None, quadrature='GLegRS', *
     df = setup_finite_difference(df, f, dt)
 
     quad = select_quadrature_method(quadrature)
-    Q = quad(start=start, finish=finish, alpha=alpha, **kwargs)
-    I = Q.integrate(f=df)
+    quad(start=start, finish=finish, alpha=alpha, **kwargs)
+    integral = quad.integrate(f=df)
 
     if quadrature.lower() == 'glag':
         extend_precision = True
@@ -51,13 +52,13 @@ def caputo(f, start, finish, dt=1e-4, alpha=0.0, df=None, quadrature='GLegRS', *
         extend_precision = False
 
     if extend_precision is True:
-        fd = float((I)/(sp.gamma(1-alpha)))
+        fd = float((integral)/(sp.gamma(1-alpha)))
     else:
-        fd = (I)/(sc_gamma(1 - alpha))
+        fd = (integral)/(sc_gamma(1 - alpha))
     # assemble output
-    return dict(fd=fd, I=I, Q=Q)
+    return dict(fd=fd, integral=integral, quad=quad)
 
-    
+
 def setup_finite_difference(df, f, dt):
     '''
     Check if finite difference function is defined
@@ -173,4 +174,3 @@ if __name__ == '__main__':  # pragma: no cover
     alpha = 0.9
     out = caputo(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt)
     print('\tD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 13.8153))
-
