@@ -54,7 +54,7 @@ def caputo(f, start, finish, dt=1e-4, alpha=0.0,
     else:
         fd = (integral)/(sc_gamma(1 - alpha))
     # assemble output
-    return dict(fd=fd, integral=integral, quadobj=quadobj)
+    return dict(fd=fd, I1=integral, Q1=quadobj)
 
 
 def grunwaldletnikov(f, start, finish, dt=1e-2, alpha=0.0):
