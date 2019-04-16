@@ -2,7 +2,8 @@ import numpy as np
 import sympy as sp
 from sympy.integrals.quadrature import gauss_gen_laguerre as sp_gauss_laguerre
 from pyfod.utilities import check_alpha
-from pyfod.utilities import check_function, check_singularity
+from pyfod.utilities import check_value
+from pyfod.utilities import check_singularity
 from pyfod.utilities import check_node_type
 
 
@@ -34,7 +35,7 @@ class GaussLegendre:
                 self.singularity - self.points)**(-alpha)
 
     def integrate(self, f=None):
-        f = check_function(f, self.f)
+        f = check_value(f, self.f, 'function - f')
         self.f = f
         return (self.weights*f(self.points)).sum()
 
@@ -114,7 +115,7 @@ class GaussLaguerre:
         self.update_weights(alpha=alpha)
 
     def integrate(self, f=None):
-        f = check_function(f, self.f)
+        f = check_value(f, self.f, 'function - f')
         self.f = f
         # transform kernel
         span = self.finish - self.start
@@ -171,7 +172,7 @@ class RiemannSum(object):
         self.weights = self._rs_weights(grid=self.grid, alpha=alpha)
 
     def integrate(self, f=None):
-        f = check_function(f, self.f)
+        f = check_value(f, self.f, 'function - f')
         self.f = f
         return (self.weights*f(self.points)).sum()
 
@@ -210,7 +211,7 @@ class GaussLegendreRiemannSum(object):
         self.f = f
 
     def integrate(self, f=None):
-        f = check_function(f, self.f)
+        f = check_value(f, self.f, 'function - f')
         self.f = f
         return self.GLeg.integrate(f=f) + self.RS.integrate(f=f)
 
@@ -243,7 +244,7 @@ class GaussLegendreGaussLaguerre(object):
         self.f = f
 
     def integrate(self, f=None):
-        f = check_function(f, self.f)
+        f = check_value(f, self.f, 'function - f')
         self.f = f
         return self.GLeg.integrate(f=f) + self.GLag.integrate(f=f)
 
