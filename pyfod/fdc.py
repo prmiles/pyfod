@@ -12,7 +12,9 @@ from pyfod.RiemannSum import RiemannSum
 
 
 def fdc(f, start, finish, dt=1e-4, alpha=0.0, quadrature='GLegRS', **kwargs):
-
+    '''
+    Riemann-Liouville Fractional Derivative Calculator
+    '''
     quad = select_quadrature_method(quadrature)
     Q1 = quad(start=start, finish=finish, alpha=alpha, **kwargs)
     I1 = Q1.integrate(f=f)
@@ -30,6 +32,42 @@ def fdc(f, start, finish, dt=1e-4, alpha=0.0, quadrature='GLegRS', **kwargs):
         fd = (I1-I2)/(dt*sc_gamma(1 - alpha))
     # assemble output
     return dict(fd=fd, I1=I1, I2=I2, Q1=Q1, Q2=Q2)
+
+
+def caputo(f, start, finish, dt=1e-4, alpha=0.0, df=None, quadrature='GLegRS', **kwargs):
+    '''
+    Caputo Fractional Derivative Calculator
+    '''
+    # Check finite difference function
+    df = setup_finite_difference(df, f, dt)
+
+    quad = select_quadrature_method(quadrature)
+    Q = quad(start=start, finish=finish, alpha=alpha, **kwargs)
+    I = Q.integrate(f=df)
+
+    if quadrature.lower() == 'glag':
+        extend_precision = True
+    else:
+        extend_precision = False
+
+    if extend_precision is True:
+        fd = float((I)/(sp.gamma(1-alpha)))
+    else:
+        fd = (I)/(sc_gamma(1 - alpha))
+    # assemble output
+    return dict(fd=fd, I=I, Q=Q)
+
+    
+def setup_finite_difference(df, f, dt):
+    '''
+    Check if finite difference function is defined
+    '''
+    def default_df(t):
+        return (f(t) - f(t-dt))/dt
+    if df is None:
+        return default_df
+    else:
+        return df
 
 
 def select_quadrature_method(quadrature):
@@ -67,55 +105,72 @@ if __name__ == '__main__':  # pragma: no cover
     dt = 1e-6
     NRS = 1000
     NGLeg = 5
-    print('Testing quadrature method: GLegRS')
+    print('Testing Riemann-Liouville Fractional Derivative:')
+    print('\tQuadrature method: GLegRS')
     # Test alpha = 0.0
     alpha = 0.0
     out = fdc(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt,
               NGLeg=NGLeg, NRS=NRS)
-    print('D^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.38906))
+    print('\tQD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.38906))
     # Test alpha = 0.1
     alpha = 0.1
     out = fdc(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt,
               NGLeg=NGLeg, NRS=NRS)
-    print('D^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.95224))
+    print('\tQD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.95224))
     # Test alpha = 0.9
     alpha = 0.9
     out = fdc(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt,
               NGLeg=NGLeg, NRS=NRS)
-    print('D^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 13.8153))
+    print('\tQD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 13.8153))
 
     # Test - Riemann Quadrature
-    print('Testing quadrature method: RS')
+    print('\tQuadrature method: RS')
     # Test alpha = 0.0
     alpha = 0.0
     out = fdc(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt,
               quadrature='rs', N=NRS)
-    print('D^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.38906))
+    print('\tD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.38906))
     # Test alpha = 0.1
     alpha = 0.1
     out = fdc(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt,
               quadrature='rs', N=NRS)
-    print('D^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.95224))
+    print('\tD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.95224))
     # Test alpha = 0.9
     alpha = 0.9
     out = fdc(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt,
               quadrature='rs', N=NRS)
-    print('D^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 13.8153))
+    print('\tD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 13.8153))
 
     # Test Extended Precision - Gauss Laguerre Quadrature
-    print('Testing quadrature method: GLag')
+    print('\tQuadrature method: GLag')
     # Test alpha = 0.0
     alpha = 0.0
     out = fdc(f=fspexp, alpha=alpha, start=start, finish=finish, dt=dt,
               quadrature='glag')
-    print('D^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.38906))
+    print('\tD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.38906))
     # Test alpha = 0.1
     alpha = 0.1
     out = fdc(f=fspexp, alpha=alpha, start=start, finish=finish, dt=dt,
               quadrature='glag')
-    print('D^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.95224))
+    print('\tD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.95224))
     # Test alpha = 0.9
     alpha = 0.9
     out = fdc(f=fspexp, alpha=alpha, start=start, finish=finish, dt=dt,
               quadrature='glag', N=32, n_digits=60)
-    print('D^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 13.8153))
+    print('\tD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 13.8153))
+
+    # Test Caputo Fractional Derivative
+    print('Testing Caputo Fractional Derivative:')
+    # Test alpha = 0.0
+    alpha = 0.0
+    out = caputo(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt)
+    print('\tD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.38906))
+    # Test alpha = 0.1
+    alpha = 0.1
+    out = caputo(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt)
+    print('\tD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.95224))
+    # Test alpha = 0.9
+    alpha = 0.9
+    out = caputo(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt)
+    print('\tD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 13.8153))
+
