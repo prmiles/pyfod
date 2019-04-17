@@ -23,6 +23,14 @@ This code can be found on the `Github project page <https://github.com/prmiles/p
 
 You can also clone the repository and run ``python  setup.py install``.
 
+Getting Started
+===============
+
+- `Tutorial notebooks <https://nbviewer.jupyter.org/github/prmiles/notebooks/tree/master/pyfod/index.ipynb>`_
+- `Release history`_
+
+.. _Release history: CHANGELOG.rst
+
 Feedback
 ========
 
