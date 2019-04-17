@@ -127,7 +127,7 @@ class GaussLaguerre:
             s = 0
             for ii, (w, f) in enumerate(zip(self.weights, feval)):
                 s += w*f
-            return s
+            return np.float(s)
         else:
             s = (self.weights*(f(span*self.points + self.start))).sum()
             return s
