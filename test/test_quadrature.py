@@ -211,12 +211,12 @@ class Integrate_with_extended(unittest.TestCase):
     def test_with_f(self):
         GQ = qm.GaussLaguerre()
         a = GQ.integrate(f=self.fsp)
-        self.assertTrue(a.is_Float, msg='Expect sympy float return')
+        self.assertTrue(isinstance(a,float), msg='Expect float return')
 
     def test_with_alpha(self):
         GQ = qm.GaussLaguerre()
         a = GQ.integrate(f=self.fsp)
-        self.assertTrue(a.is_Float, msg='Expect sympy float return')
+        self.assertTrue(isinstance(a,float), msg='Expect float return')
 
 
 # --------------------------
@@ -317,8 +317,8 @@ class GaussLegendreLaguerreTesting(unittest.TestCase):
     def test_integrate(self):
         Q = qm.GaussLegendreGaussLaguerre(start=0.0, finish=1.0)
         a = Q.integrate(f=self.f)
-        self.assertTrue(isinstance(a, object),
-                        msg='Expect object if extended')
+        self.assertTrue(isinstance(a, float),
+                        msg='Expect float regardless of extended precision')
         Q = qm.GaussLegendreGaussLaguerre(start=0.0, finish=1.0,
                                           extend_precision=False)
         a = Q.integrate(f=self.f)
