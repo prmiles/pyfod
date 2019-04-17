@@ -4,7 +4,13 @@
 |build| |coverage| |zenodo|
 
 The `pyfod <https://github.com/prmiles/pyfod/wiki>`_ package is a Python
-repository for performing fractional-order derivative operations.
+repository for performing fractional-order derivative operations.  Several different definitions of fractional derivative are available within the package:
+
+- Riemann-Liouville
+- Caputo (development)
+- Grünwald-Letnikov (development)
+
+For now, the package is designed specifically for problems where the fractional order is between 0 and 1.  Accomadating a broader range of fractional order values will be a feature added as time permits.
 
 Installation
 ============
