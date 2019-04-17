@@ -23,6 +23,12 @@ This code can be found on the `Github project page <https://github.com/prmiles/p
 
 You can also clone the repository and run ``python  setup.py install``.
 
+Feedback
+========
+
+- `Feature Request <https://github.com/prmiles/pyfod/issues/new?template=feature_request.md>`_
+- `Bug Report <https://github.com/prmiles/pyfod/issues/new?template=bug_report.md>`_
+
 .. |build| image:: https://travis-ci.org/prmiles/pyfod.svg?branch=master
     :target: https://travis-ci.org/prmiles/pyfod
 
