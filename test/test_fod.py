@@ -28,7 +28,7 @@ class SelectQuadratureMethodTesting(unittest.TestCase):
 class RiemannLiouville(unittest.TestCase):
 
     def check_contents(self, out):
-        keys = ['fd', 'I1', 'I2', 'Q1', 'Q2']
+        keys = ['fd', 'i1', 'i2', 'q1', 'q2']
         for key in keys:
             self.assertTrue(key in out,
                             msg=str('{} not in output'.format(key)))
@@ -36,18 +36,18 @@ class RiemannLiouville(unittest.TestCase):
                             msg='Expect float')
 
     def test_fod(self):
-        start = 0.0
-        finish = 1.0
+        lower = 0.0
+        upper = 1.0
         NRS = 10
         # Test alpha = 0.0
         alpha = 0.0
-        out = rlou(f=fexp, alpha=alpha, start=start,
-                   finish=finish, NRS=NRS)
+        out = rlou(f=fexp, alpha=alpha, lower=lower,
+                   upper=upper, nrs=NRS)
         self.check_contents(out)
         self.assertTrue(isinstance(out['fd'], float),
                         msg='Expect float return')
-        out = rlou(f=fsp, alpha=alpha, start=start,
-                   finish=finish, quadrature='glag')
+        out = rlou(f=fsp, alpha=alpha, lower=lower,
+                   upper=upper, quadrature='glag')
         self.check_contents(out)
         self.assertTrue(isinstance(out['fd'], float),
                         msg='Expect float return')
@@ -57,7 +57,7 @@ class RiemannLiouville(unittest.TestCase):
 class Caputo(unittest.TestCase):
 
     def check_contents(self, out):
-        keys = ['fd', 'I1', 'Q1']
+        keys = ['fd', 'i1', 'q1']
         for key in keys:
             self.assertTrue(key in out,
                             msg=str('{} not in output'.format(key)))
@@ -65,18 +65,18 @@ class Caputo(unittest.TestCase):
                             msg='Expect float')
 
     def test_fod(self):
-        start = 0.0
-        finish = 1.0
+        lower = 0.0
+        upper = 1.0
         NRS = 10
         # Test alpha = 0.0
         alpha = 0.0
-        out = cap(f=fexp, alpha=alpha, start=start,
-                  finish=finish, NRS=NRS)
+        out = cap(f=fexp, alpha=alpha, lower=lower,
+                  upper=upper, nrs=NRS)
         self.check_contents(out)
         self.assertTrue(isinstance(out['fd'], float),
                         msg='Expect float return')
-        out = cap(f=fsp, alpha=alpha, start=start,
-                  finish=finish, quadrature='glag')
+        out = cap(f=fsp, alpha=alpha, lower=lower,
+                  upper=upper, quadrature='glag')
         self.check_contents(out)
         self.assertTrue(isinstance(out['fd'], float),
                         msg='Expect float return')
@@ -92,17 +92,17 @@ class GrunwaldLetnikov(unittest.TestCase):
                             msg=str('{} not in output'.format(key)))
 
     def test_fod(self):
-        start = 0.0
-        finish = 1.0
+        lower = 0.0
+        upper = 1.0
         # Test alpha = 0.0
         alpha = 0.0
-        out = glet(f=fexp, alpha=alpha, start=start,
-                   finish=finish)
+        out = glet(f=fexp, alpha=alpha, lower=lower,
+                   upper=upper)
         self.check_contents(out)
         self.assertTrue(out['fd'].is_Float,
                         msg='Expect sympy float return')
-        out = glet(f=fsp, alpha=alpha, start=start,
-                   finish=finish)
+        out = glet(f=fsp, alpha=alpha, lower=lower,
+                   upper=upper)
         self.check_contents(out)
         self.assertTrue(out['fd'].is_Float,
                         msg='Expect sympy float return')

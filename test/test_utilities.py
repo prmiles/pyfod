@@ -28,10 +28,10 @@ class Utilities(unittest.TestCase):
         self.assertEqual(a, 0.5, msg='Expect user defined')
 
     def test_check_node_type(self):
-        a = ut.check_node_type(N=1)
+        a = ut.check_node_type(n=1)
         self.assertEqual(a, 1, msg='Expect 1')
         self.assertTrue(isinstance(a, int), msg='Expect int')
-        a = ut.check_node_type(N=1.0)
+        a = ut.check_node_type(n=1.0)
         self.assertTrue(isinstance(a, int), msg='Expect int')
 
     def test_check_values(self):
