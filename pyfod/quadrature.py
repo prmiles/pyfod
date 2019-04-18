@@ -30,7 +30,7 @@ class GaussLegendre:
 
     def update_weights(self, alpha=None):
         if alpha is None:
-            alpha = self.alpha
+            alpha = check_value(alpha, self.alpha, 'fractional order - alpha')
         self.alpha = alpha
         # update weights based on alpha
         self.weights = self.initial_weights*(
@@ -127,7 +127,7 @@ class GaussLaguerre:
 
     def update_weights(self, alpha=None):
         if alpha is None:
-            alpha = self.alpha
+            alpha = check_value(alpha, self.alpha, 'fractional order - alpha')
         self.alpha = alpha
         span = self.finish - self.start
         # check if sympy
@@ -159,7 +159,7 @@ class RiemannSum(object):
 
     def update_weights(self, alpha=None):
         if alpha is None:
-            alpha = self.alpha
+            alpha = check_value(alpha, self.alpha, 'fractional order - alpha')
         check_alpha(alpha=alpha)
         self.alpha = alpha
         self.weights = self._rs_weights(grid=self.grid, alpha=alpha)
@@ -211,7 +211,7 @@ class GaussLegendreRiemannSum(object):
 
     def update_weights(self, alpha=None):
         if alpha is None:
-            alpha = self.alpha
+            alpha = check_value(alpha, self.alpha, 'fractional order - alpha')
         self.alpha = alpha
         self.GLeg.update_weights(alpha=alpha)
         self.RS.update_weights(alpha=alpha)
@@ -245,7 +245,7 @@ class GaussLegendreGaussLaguerre(object):
 
     def update_weights(self, alpha=None):
         if alpha is None:
-            alpha = self.alpha
+            alpha = check_value(alpha, self.alpha, 'fractional order - alpha')
         self.alpha = alpha
         self.GLeg.update_weights(alpha=alpha)
         self.GLag.update_weights(alpha=alpha)
