@@ -189,12 +189,12 @@ class RiemannSum(object):
 # ---------------------
 class GaussLegendreRiemannSum(object):
 
-    def __init__(self, NGLegDom=5, GlegDeg=4, NRS=20, pGLeg=0.9,
+    def __init__(self, NGLegDom=5, GLegDeg=4, NRS=20, pGLeg=0.9,
                  start=0.0, finish=1.0, alpha=0.0, f=None):
         self.description = 'Gaussian Quadrature, Riemann-Sum'
         # setup GQ points/weights
         switch_time = (finish - start)*pGLeg
-        self.GLeg = GaussLegendre(Ndom=NGLegDom, deg=GlegDeg, start=start,
+        self.GLeg = GaussLegendre(Ndom=NGLegDom, deg=GLegDeg, start=start,
                                   finish=switch_time, alpha=alpha,
                                   singularity=finish, f=f)
         # setup RS points/weights
