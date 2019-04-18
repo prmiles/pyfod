@@ -5,19 +5,19 @@ import numpy as np
 import sympy as sp
 from scipy.special import gamma as sc_gamma
 from pyfod import quadrature as qm
-from pyfod.utilities import check_input
+from pyfod.utilities import check_input as _check_input
 
 
-def riemannliouville(f, start, finish, dt=1e-4,
+def riemannliouville(f, lower, upper, dt=1e-4,
                      alpha=0.0, quadrature='GLegRS', **kwargs):
     '''
     Riemann-Liouville Fractional Derivative Calculator
     '''
     quad = _select_quadrature_method(quadrature)
-    Q1 = quad(start=start, finish=finish, alpha=alpha, **kwargs)
-    I1 = Q1.integrate(f=f)
-    Q2 = quad(start=start, finish=finish-dt, alpha=alpha, **kwargs)
-    I2 = Q2.integrate(f=f)
+    q1 = quad(lower=lower, upper=upper, alpha=alpha, **kwargs)
+    i1 = q1.integrate(f=f)
+    q2 = quad(lower=lower, upper=upper-dt, alpha=alpha, **kwargs)
+    i2 = q2.integrate(f=f)
 
     if quadrature.lower() == 'glag':
         extend_precision = True
@@ -25,14 +25,14 @@ def riemannliouville(f, start, finish, dt=1e-4,
         extend_precision = False
 
     if extend_precision is True:
-        fd = float((I1-I2)/(dt*sp.gamma(1-alpha)))
+        fd = float((i1-i2)/(dt*sp.gamma(1-alpha)))
     else:
-        fd = (I1-I2)/(dt*sc_gamma(1 - alpha))
+        fd = (i1-i2)/(dt*sc_gamma(1 - alpha))
     # assemble output
-    return dict(fd=fd, I1=I1, I2=I2, Q1=Q1, Q2=Q2)
+    return dict(fd=fd, i1=i1, i2=i2, q1=q1, q2=q2)
 
 
-def caputo(f, start, finish, dt=1e-4, alpha=0.0,
+def caputo(f, lower, upper, dt=1e-4, alpha=0.0,
            df=None, quadrature='GLegRS', **kwargs):
     '''
     Caputo Fractional Derivative Calculator
@@ -41,7 +41,7 @@ def caputo(f, start, finish, dt=1e-4, alpha=0.0,
     df = _setup_finite_difference(df, f, dt)
 
     quad = _select_quadrature_method(quadrature)
-    quadobj = quad(start=start, finish=finish, alpha=alpha, **kwargs)
+    quadobj = quad(lower=lower, upper=upper, alpha=alpha, **kwargs)
     integral = quadobj.integrate(f=df)
 
     if quadrature.lower() == 'glag':
@@ -54,23 +54,23 @@ def caputo(f, start, finish, dt=1e-4, alpha=0.0,
     else:
         fd = (integral)/(sc_gamma(1 - alpha))
     # assemble output
-    return dict(fd=fd, I1=integral, Q1=quadobj)
+    return dict(fd=fd, i1=integral, q1=quadobj)
 
 
-def grunwaldletnikov(f, start, finish, dt=1e-2, alpha=0.0):
+def grunwaldletnikov(f, lower, upper, dt=1e-2, alpha=0.0):
     '''
     Grunwald-Letnikov Fractional Derivative Calculator
     '''
     # Check user input
-    check_input(f, 'f')
-    check_input(start, 'start')
-    check_input(finish, 'finish')
+    _check_input(f, 'f')
+    _check_input(lower, 'lower')
+    _check_input(upper, 'upper')
     # Evaluate fractional derivative
     fd = 0.0
-    N = np.floor((finish - start)/dt).astype(int)
-    for m in range(0, N):
+    n = np.floor((upper - lower)/dt).astype(int)
+    for m in range(0, n):
         tmp = (-1.0)**m * sp.binomial(alpha, m) * (
-                f(finish + (alpha - m)*dt))
+                f(upper + (alpha - m)*dt))
         fd += tmp
     fd = fd/(dt**alpha)
     # assemble output
@@ -119,8 +119,8 @@ if __name__ == '__main__':  # pragma: no cover
     def fspexp(t):
         return sp.exp(2*t)
 
-    start = 0.0
-    finish = 1.0
+    lower = 0.0
+    upper = 1.0
     dt = 1e-4
     NRS = 1000
     NGLeg = 5
@@ -129,69 +129,69 @@ if __name__ == '__main__':  # pragma: no cover
     # Test alpha = 0.0
     alpha = 0.0
     rlou = riemannliouville
-    out = rlou(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt,
-               NGLeg=NGLeg, NRS=NRS)
+    out = rlou(f=fexp, alpha=alpha, lower=lower, upper=upper, dt=dt,
+               ndom=NGLeg, nrs=NRS)
     print('\tQD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.38906))
     # Test alpha = 0.1
     alpha = 0.1
-    out = rlou(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt,
-               NGLeg=NGLeg, NRS=NRS)
+    out = rlou(f=fexp, alpha=alpha, lower=lower, upper=upper, dt=dt,
+               ndom=NGLeg, nrs=NRS)
     print('\tQD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.95224))
     # Test alpha = 0.9
     alpha = 0.9
-    out = rlou(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt,
-               NGLeg=NGLeg, NRS=NRS)
+    out = rlou(f=fexp, alpha=alpha, lower=lower, upper=upper, dt=dt,
+               ndom=NGLeg, nrs=NRS)
     print('\tQD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 13.8153))
 
     # Test - Riemann Quadrature
     print('\tQuadrature method: RS')
     # Test alpha = 0.0
     alpha = 0.0
-    out = rlou(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt,
-               quadrature='rs', N=NRS)
+    out = rlou(f=fexp, alpha=alpha, lower=lower, upper=upper, dt=dt,
+               quadrature='rs', n=NRS)
     print('\tD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.38906))
     # Test alpha = 0.1
     alpha = 0.1
-    out = rlou(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt,
-               quadrature='rs', N=NRS)
+    out = rlou(f=fexp, alpha=alpha, lower=lower, upper=upper, dt=dt,
+               quadrature='rs', n=NRS)
     print('\tD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.95224))
     # Test alpha = 0.9
     alpha = 0.9
-    out = rlou(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt,
-               quadrature='rs', N=NRS)
+    out = rlou(f=fexp, alpha=alpha, lower=lower, upper=upper, dt=dt,
+               quadrature='rs', n=NRS)
     print('\tD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 13.8153))
 
     # Test Extended Precision - Gauss Laguerre Quadrature
     print('\tQuadrature method: GLag')
     # Test alpha = 0.0
     alpha = 0.0
-    out = rlou(f=fspexp, alpha=alpha, start=start, finish=finish, dt=dt,
+    out = rlou(f=fspexp, alpha=alpha, lower=lower, upper=upper, dt=dt,
                quadrature='glag')
     print('\tD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.38906))
     # Test alpha = 0.1
     alpha = 0.1
-    out = rlou(f=fspexp, alpha=alpha, start=start, finish=finish, dt=dt,
+    out = rlou(f=fspexp, alpha=alpha, lower=lower, upper=upper, dt=dt,
                quadrature='glag')
     print('\tD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.95224))
     # Test alpha = 0.9
     alpha = 0.9
-    out = rlou(f=fspexp, alpha=alpha, start=start, finish=finish, dt=dt,
-               quadrature='glag', N=32, n_digits=60)
+    out = rlou(f=fspexp, alpha=alpha, lower=lower, upper=upper, dt=dt,
+               quadrature='glag', deg=32, n_digits=60)
     print('\tD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 13.8153))
 
     # Test Caputo Fractional Derivative
     print('Testing Caputo Fractional Derivative:')
     # Test alpha = 0.0
     alpha = 0.0
-    out = caputo(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt)
+    out = caputo(f=fexp, alpha=alpha, lower=lower, upper=upper, dt=dt)
     print('\tD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.38906))
     # Test alpha = 0.1
     alpha = 0.1
-    out = caputo(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt)
+    out = caputo(f=fexp, alpha=alpha, lower=lower, upper=upper, dt=dt)
     print('\tD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.95224))
     # Test alpha = 0.9
     alpha = 0.9
-    out = caputo(f=fexp, alpha=alpha, start=start, finish=finish, dt=dt)
+    out = caputo(f=fexp, alpha=alpha, lower=lower, upper=upper, dt=dt)
     print('\tD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 13.8153))
 
     # Test Grunwald-Letnikov Fractional Derivative
@@ -200,15 +200,15 @@ if __name__ == '__main__':  # pragma: no cover
     # Test alpha = 0.0
     alpha = 0.0
     out = grunwaldletnikov(f=fexp, alpha=alpha,
-                           start=start, finish=finish, dt=dt)
+                           lower=lower, upper=upper, dt=dt)
     print('\tD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.38906))
     # Test alpha = 0.1
     alpha = 0.1
     out = grunwaldletnikov(f=fexp, alpha=alpha,
-                           start=start, finish=finish, dt=dt)
+                           lower=lower, upper=upper, dt=dt)
     print('\tD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 7.95224))
     # Test alpha = 0.9
     alpha = 0.9
     out = grunwaldletnikov(f=fexp, alpha=alpha,
-                           start=start, finish=finish, dt=dt)
+                           lower=lower, upper=upper, dt=dt)
     print('\tD^{}[exp(2t)] = {} ({})'.format(alpha, out['fd'], 13.8153))

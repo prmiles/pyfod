@@ -40,5 +40,5 @@ def check_singularity(singularity, finish):
         return singularity
 
 
-def check_node_type(N):
-    return int(N)
+def check_node_type(n):
+    return int(n)

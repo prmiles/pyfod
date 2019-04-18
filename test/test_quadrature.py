@@ -12,7 +12,7 @@ class GLegTesting(unittest.TestCase):
         return np.exp(2*t)
 
     def test_init(self):
-        GL = qm.GaussLegendre(Ndom=10, deg=6, start=1.0, finish=12.0)
+        GL = qm.GaussLegendre(ndom=10, deg=6, lower=1.0, upper=12.0)
         attributes = ['points', 'weights', 'f', 'alpha', 'singularity',
                       'initial_weights', 'description']
         for att in attributes:
@@ -20,14 +20,14 @@ class GLegTesting(unittest.TestCase):
                             msg=str('Missing {} attribute'.format(att)))
 
     def test_update_weights(self):
-        GLeg = qm.GaussLegendre(Ndom=10, deg=3, start=1.0, finish=12.0)
+        GLeg = qm.GaussLegendre(ndom=10, deg=3, lower=1.0, upper=12.0)
         GLeg.weights = []
         GLeg.update_weights(alpha=0.0)
         self.assertTrue(isinstance(GLeg.weights, np.ndarray),
                         msg='Weights should be updated.')
 
     def test_integrate(self):
-        GLeg = qm.GaussLegendre(Ndom=10, deg=3, start=0.0, finish=1.0)
+        GLeg = qm.GaussLegendre(ndom=10, deg=3, lower=0.0, upper=1.0)
         a = GLeg.integrate(f=self.f)
         self.assertTrue(isinstance(a, float), msg='Expect float')
 
@@ -36,7 +36,7 @@ class GLegTesting(unittest.TestCase):
 class BaseGaussPoints(unittest.TestCase):
 
     def test_base_gauss_points(self):
-        GQ = qm.GaussLegendre(Ndom=10, deg=4, start=1.0, finish=12.0)
+        GQ = qm.GaussLegendre(ndom=10, deg=4, lower=1.0, upper=12.0)
         gpts = GQ._base_gauss_points(deg=4)
         mlgpts = np.array([0.069431844202974, 0.330009478207572,
                            0.669990521792428, 0.930568155797026])
@@ -52,7 +52,7 @@ class BaseGaussPoints(unittest.TestCase):
 class BaseGaussWeights(unittest.TestCase):
 
     def test_base_gauss_weights(self):
-        GQ = qm.GaussLegendre(Ndom=10, deg=4, start=1.0, finish=12.0)
+        GQ = qm.GaussLegendre(ndom=10, deg=4, lower=1.0, upper=12.0)
         gwts = GQ._base_gauss_weights(deg=4, h=0.1)
         mlgwts = np.array([0.017392742256873, 0.032607257743127,
                            0.032607257743127, 0.017392742256873]).T
@@ -67,10 +67,10 @@ class BaseGaussWeights(unittest.TestCase):
 class IntervalGaussPoints(unittest.TestCase):
 
     def test_interval_gauss_points(self):
-        GQ = qm.GaussLegendre(Ndom=10, deg=4, start=1.0, finish=12.0)
+        GQ = qm.GaussLegendre(ndom=10, deg=4, lower=1.0, upper=12.0)
         igp = GQ._interval_gauss_points(
                 base_gpts=GQ._base_gauss_points(deg=4),
-                Ndom=4, deg=4, h=0.1, start=0.)
+                ndom=4, deg=4, h=0.1, lower=0.)
         self.assertEqual(igp.shape, (4*4,), msg='Expect shape = (16,)')
 
 
@@ -78,8 +78,8 @@ class IntervalGaussPoints(unittest.TestCase):
 class GaussPoints(unittest.TestCase):
 
     def test_gauss_points(self):
-        GQ = qm.GaussLegendre(Ndom=10, start=1.0, finish=12.0)
-        gpoints = GQ._gauss_points(Ndom=4, deg=4, h=0.1, start=0.)
+        GQ = qm.GaussLegendre(ndom=10, lower=1.0, upper=12.0)
+        gpoints = GQ._gauss_points(ndom=4, deg=4, h=0.1, lower=0.)
         self.assertEqual(gpoints.shape, (4*4,), msg='Expect shape = (16,)')
 
 
@@ -87,8 +87,8 @@ class GaussPoints(unittest.TestCase):
 class GaussWeights(unittest.TestCase):
 
     def test_gauss_weights(self):
-        GQ = qm.GaussLegendre(Ndom=10, start=1.0, finish=12.0)
-        gweights = GQ._gauss_weights(Ndom=4, deg=4, h=0.1)
+        GQ = qm.GaussLegendre(ndom=10, lower=1.0, upper=12.0)
+        gweights = GQ._gauss_weights(ndom=4, deg=4, h=0.1)
         self.assertEqual(gweights.shape, (4*4,), msg='Expect shape = (16,)')
 
 
@@ -100,7 +100,7 @@ class GaussLaguerreTesting(unittest.TestCase):
         return np.exp(2*t)
 
     def test_init(self):
-        Q = qm.GaussLaguerre(N=10, start=1.0, finish=12.0)
+        Q = qm.GaussLaguerre(deg=10, lower=1.0, upper=12.0)
         attributes = ['points', 'weights', 'f', 'alpha',
                       'initial_weights', 'description']
         for att in attributes:
@@ -108,7 +108,7 @@ class GaussLaguerreTesting(unittest.TestCase):
                             msg=str('Missing {} attribute'.format(att)))
 
     def test_update_weights(self):
-        Q = qm.GaussLaguerre(N=10, start=1.0, finish=12.0,
+        Q = qm.GaussLaguerre(deg=10, lower=1.0, upper=12.0,
                              extend_precision=False)
         Q.weights = []
         Q.update_weights(alpha=0.0)
@@ -116,7 +116,7 @@ class GaussLaguerreTesting(unittest.TestCase):
                         msg='Weights should be updated.')
 
     def test_integrate(self):
-        Q = qm.GaussLaguerre(N=10, start=0.0, finish=1.0,
+        Q = qm.GaussLaguerre(deg=10, lower=0.0, upper=1.0,
                              extend_precision=False)
         a = Q.integrate(f=self.f)
         self.assertTrue(isinstance(a, float), msg='Expect float')
@@ -130,7 +130,7 @@ class Initialization_non_extended(unittest.TestCase):
         return np.exp(2*t)
 
     def test_init(self):
-        GQ = qm.GaussLaguerre(N=10, start=1.0, finish=12.0,
+        GQ = qm.GaussLaguerre(deg=10, lower=1.0, upper=12.0,
                               extend_precision=False)
         self.assertTrue(hasattr(GQ, 'f'), msg='Expect attribute f to exist')
         self.assertEqual(GQ.f, None, msg='Expect value of None')
@@ -139,7 +139,7 @@ class Initialization_non_extended(unittest.TestCase):
         self.assertEqual(GQ.alpha, 0, msg='Expect alpha eq 0')
 
     def test_init_with_f(self):
-        GQ = qm.GaussLaguerre(N=10, start=1.0, finish=12.0, alpha=0.5,
+        GQ = qm.GaussLaguerre(deg=10, lower=1.0, upper=12.0, alpha=0.5,
                               f=self.f, extend_precision=False)
         self.assertTrue(hasattr(GQ, 'f'), msg='Expect attribute f to exist')
         self.assertEqual(GQ.f, self.f, msg='Expect function f')
@@ -156,7 +156,7 @@ class Initialization_with_extended(unittest.TestCase):
         return sp.cos(t)
 
     def test_init(self):
-        GQ = qm.GaussLaguerre(N=10, start=1.0, finish=12.0)
+        GQ = qm.GaussLaguerre(deg=10, lower=1.0, upper=12.0)
         self.assertTrue(hasattr(GQ, 'f'), msg='Expect attribute f to exist')
         self.assertEqual(GQ.f, None, msg='Expect value of None')
         self.assertEqual(len(GQ.points), 10, msg='Expect 10 nodes')
@@ -164,7 +164,7 @@ class Initialization_with_extended(unittest.TestCase):
         self.assertEqual(GQ.alpha, 0, msg='Expect alpha eq 0')
 
     def test_init_with_f(self):
-        GQ = qm.GaussLaguerre(N=10, start=1.0, finish=12.0,
+        GQ = qm.GaussLaguerre(deg=10, lower=1.0, upper=12.0,
                               alpha=0.5, f=self.fsp)
         self.assertTrue(hasattr(GQ, 'f'), msg='Expect attribute f to exist')
         self.assertEqual(GQ.f, self.fsp, msg='Expect function fsp')
@@ -227,27 +227,27 @@ class RiemannSumTesting(unittest.TestCase):
         return np.exp(2*t)
 
     def test_init(self):
-        RS = qm.RiemannSum(N=10, start=1.0, finish=12.0)
+        RS = qm.RiemannSum(n=10, lower=1.0, upper=12.0)
         attributes = ['points', 'weights', 'f', 'alpha', 'grid', 'description']
         for att in attributes:
             self.assertTrue(hasattr(RS, att),
                             msg=str('Missing {} attribute'.format(att)))
 
     def test_update_weights(self):
-        RS = qm.RiemannSum(N=10, start=1.0, finish=12.0)
+        RS = qm.RiemannSum(n=10, lower=1.0, upper=12.0)
         RS.weights = []
         RS.update_weights(alpha=0.0)
         self.assertTrue(isinstance(RS.weights, np.ndarray),
                         msg='Weights should be updated.')
 
     def test_integrate(self):
-        RS = qm.RiemannSum(N=10, start=0.0, finish=1.0)
+        RS = qm.RiemannSum(n=10, lower=0.0, upper=1.0)
         a = RS.integrate(f=self.f)
         self.assertTrue(isinstance(a, float), msg='Expect float')
 
     def test_grid(self):
         RS = qm.RiemannSum()
-        grid = RS._rs_grid(start=1.0, finish=12.0, N=50)
+        grid = RS._rs_grid(lower=1.0, upper=12.0, n=50)
         self.assertTrue(np.allclose(grid, np.linspace(1.0, 12.0, num=50)),
                         msg=str('Expect arrays equal: {} neq {}'.format(
                                 grid, np.linspace(1.0, 12.0, num=50))))
@@ -256,10 +256,10 @@ class RiemannSumTesting(unittest.TestCase):
                                  grid, np.linspace(2.0, 12.0, num=50))))
 
     def test_rs_points(self):
-        RS = qm.RiemannSum(N=10, start=1.0, finish=12.0)
+        RS = qm.RiemannSum(n=10, lower=1.0, upper=12.0)
         self.assertTrue(isinstance(RS.points, np.ndarray),
                         msg='Output numpy array')
-        grid = RS._rs_grid(N=10, start=1.0, finish=12.0)
+        grid = RS._rs_grid(n=10, lower=1.0, upper=12.0)
         jj = grid.size - 1
         values = (grid[1:jj+1] + grid[0:jj])/2
         self.assertTrue(np.allclose(RS.points, values),
@@ -267,10 +267,10 @@ class RiemannSumTesting(unittest.TestCase):
                                 RS.points, values)))
 
     def different_alphas(self, alpha):
-        RS = qm.RiemannSum(alpha=alpha, N=10, start=1.0, finish=12.0)
+        RS = qm.RiemannSum(alpha=alpha, n=10, lower=1.0, upper=12.0)
         self.assertTrue(isinstance(RS.weights, np.ndarray),
                         msg='Output numpy array')
-        grid = RS._rs_grid(N=10, start=1.0, finish=12.0)
+        grid = RS._rs_grid(n=10, lower=1.0, upper=12.0)
         jj = grid.size - 1
         term2 = (grid[jj] - grid[1:jj+1])**(1-alpha)
         term3 = (grid[jj] - grid[0:jj])**(1-alpha)
@@ -297,29 +297,29 @@ class GaussLegendreLaguerreTesting(unittest.TestCase):
         return tmp
 
     def test_init(self):
-        Q = qm.GaussLegendreGaussLaguerre(start=1.0, finish=12.0)
-        attributes = ['GLeg', 'GLag', 'f', 'alpha', 'description']
+        Q = qm.GaussLegendreGaussLaguerre(lower=1.0, upper=12.0)
+        attributes = ['gleg', 'glag', 'f', 'alpha', 'description']
         for att in attributes:
             self.assertTrue(hasattr(Q, att),
                             msg=str('Missing {} attribute'.format(att)))
 
     def test_update_weights(self):
-        Q = qm.GaussLegendreGaussLaguerre(start=1.0, finish=12.0)
-        Q.GLeg.weights = []
-        Q.GLag.weights = []
+        Q = qm.GaussLegendreGaussLaguerre(lower=1.0, upper=12.0)
+        Q.gleg.weights = []
+        Q.glag.weights = []
         Q.update_weights(alpha=0.0)
-        self.assertTrue(isinstance(Q.GLeg.weights, np.ndarray),
+        self.assertTrue(isinstance(Q.gleg.weights, np.ndarray),
                         msg='Weights should be updated.')
-        self.assertTrue(isinstance(Q.GLag.weights,
+        self.assertTrue(isinstance(Q.glag.weights,
                                    object),
                         msg='Weights should be updated.')
 
     def test_integrate(self):
-        Q = qm.GaussLegendreGaussLaguerre(start=0.0, finish=1.0)
+        Q = qm.GaussLegendreGaussLaguerre(lower=0.0, upper=1.0)
         a = Q.integrate(f=self.f)
         self.assertTrue(isinstance(a, float),
                         msg='Expect float regardless of extended precision')
-        Q = qm.GaussLegendreGaussLaguerre(start=0.0, finish=1.0,
+        Q = qm.GaussLegendreGaussLaguerre(lower=0.0, upper=1.0,
                                           extend_precision=False)
         a = Q.integrate(f=self.f)
         self.assertTrue(isinstance(a, float),
@@ -334,23 +334,23 @@ class GaussRiemannSumTesting(unittest.TestCase):
         return np.exp(2*t)
 
     def test_init(self):
-        Q = qm.GaussLegendreRiemannSum(start=1.0, finish=12.0)
-        attributes = ['GLeg', 'RS', 'f', 'alpha', 'description']
+        Q = qm.GaussLegendreRiemannSum(lower=1.0, upper=12.0)
+        attributes = ['gleg', 'rs', 'f', 'alpha', 'description']
         for att in attributes:
             self.assertTrue(hasattr(Q, att),
                             msg=str('Missing {} attribute'.format(att)))
 
     def test_update_weights(self):
-        Q = qm.GaussLegendreRiemannSum(start=1.0, finish=12.0)
-        Q.GLeg.weights = []
-        Q.RS.weights = []
+        Q = qm.GaussLegendreRiemannSum(lower=1.0, upper=12.0)
+        Q.gleg.weights = []
+        Q.rs.weights = []
         Q.update_weights(alpha=0.0)
-        self.assertTrue(isinstance(Q.GLeg.weights, np.ndarray),
+        self.assertTrue(isinstance(Q.gleg.weights, np.ndarray),
                         msg='Weights should be updated.')
-        self.assertTrue(isinstance(Q.RS.weights, np.ndarray),
+        self.assertTrue(isinstance(Q.rs.weights, np.ndarray),
                         msg='Weights should be updated.')
 
     def test_integrate(self):
-        Q = qm.GaussLegendreRiemannSum(start=0.0, finish=1.0)
+        Q = qm.GaussLegendreRiemannSum(lower=0.0, upper=1.0)
         a = Q.integrate(f=self.f)
         self.assertTrue(isinstance(a, float), msg='Expect float')

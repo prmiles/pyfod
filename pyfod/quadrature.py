@@ -10,21 +10,21 @@ from pyfod.utilities import check_node_type
 # ---------------------
 class GaussLegendre:
 
-    def __init__(self, Ndom=5, deg=5, start=0.0, finish=1.0,
+    def __init__(self, ndom=5, deg=5, lower=0.0, upper=1.0,
                  alpha=0.0, f=None, singularity=None):
         self.description = 'Gaussian-Legendre Quadrature'
         check_alpha(alpha)
-        Ndom = check_node_type(Ndom)
+        ndom = check_node_type(ndom)
         deg = check_node_type(deg)
-        h = (finish - start)/Ndom
+        h = (upper - lower)/ndom
         self.alpha = alpha
         self.f = f
-        self.Ndom = Ndom
+        self.ndom = ndom
         self.deg = deg
-        self.finish = finish
-        self.singularity = check_singularity(singularity, self.finish)
-        self.points = self._gauss_points(Ndom=Ndom, deg=deg, h=h, start=start)
-        self.weights = self._gauss_weights(Ndom=Ndom, deg=deg, h=h)
+        self.upper = upper
+        self.singularity = check_singularity(singularity, self.upper)
+        self.points = self._gauss_points(ndom=ndom, deg=deg, h=h, lower=lower)
+        self.weights = self._gauss_weights(ndom=ndom, deg=deg, h=h)
         self.initial_weights = self.weights.copy()
         self.update_weights(alpha=alpha)
 
@@ -53,28 +53,28 @@ class GaussLegendre:
         return w
 
     @classmethod
-    def _interval_gauss_points(cls, base_gpts, Ndom, deg, h, start):
-        # determines the Gauss points for all Ndom intervals.
-        Gpts = np.zeros([deg*Ndom])
-        for gct in range(Ndom):
+    def _interval_gauss_points(cls, base_gpts, ndom, deg, h, lower):
+        # determines the Gauss points for all ndom intervals.
+        gpts = np.zeros([deg*ndom])
+        for gct in range(ndom):
             for ell in range(deg):
-                Gpts[(gct)*deg + ell] = ((gct)*h
-                                         + base_gpts[ell]*h + start)
-        return Gpts
+                gpts[(gct)*deg + ell] = ((gct)*h
+                                         + base_gpts[ell]*h + lower)
+        return gpts
 
-    def _gauss_points(self, Ndom, deg, h, start):
+    def _gauss_points(self, ndom, deg, h, lower):
         # base points
         gpts = self._base_gauss_points(deg)
         # determines the Gauss points for all Ndom intervals.
-        Gpts = self._interval_gauss_points(gpts, Ndom, deg, h, start)
-        return Gpts
+        gpoints = self._interval_gauss_points(gpts, ndom, deg, h, lower)
+        return gpoints
 
-    def _gauss_weights(self, Ndom, deg, h):
+    def _gauss_weights(self, ndom, deg, h):
         # determine the Gauss weights for a deg-point quadrature rule
         w = self._base_gauss_weights(deg, h)
         # copy the weights to form a vector for all Ndom intervals
         weights = w.copy()
-        for gct in range(Ndom-1):
+        for gct in range(ndom-1):
             weights = np.concatenate((weights, w))
         return weights
 
@@ -82,21 +82,21 @@ class GaussLegendre:
 # ---------------------
 class GaussLaguerre:
 
-    def __init__(self, N=5, start=0.0, finish=1.0, alpha=0.0,
+    def __init__(self, deg=5, lower=0.0, upper=1.0, alpha=0.0,
                  f=None, extend_precision=True, n_digits=30):
         self.description = 'Gaussian-Laguerre Quadrature'
-        N = check_node_type(N)
-        self.start = start
-        self.finish = finish
+        deg = check_node_type(deg)
+        self.lower = lower
+        self.upper = upper
         self.alpha = alpha
-        self.N = N
+        self.deg = deg
         self.f = f
         if extend_precision is False:
-            points, weights = np.polynomial.laguerre.laggauss(deg=N)
+            points, weights = np.polynomial.laguerre.laggauss(deg=deg)
             self.points = 1 - np.exp(-points)
         else:
             points, weights = sp_gauss_laguerre(
-                    n=N, n_digits=n_digits, alpha=0)
+                    n=deg, n_digits=n_digits, alpha=0)
             points = [-p for p in points]
             points = sp.Array(points)
             self.points = sp.Array(
@@ -110,24 +110,24 @@ class GaussLaguerre:
         f = check_value(f, self.f, 'function - f')
         self.f = f
         # transform kernel
-        span = self.finish - self.start
+        span = self.upper - self.lower
         # check if sympy
         if isinstance(self.points, sp.Array):
             evalpoints = self.points.applyfunc(
-                    lambda x: span*x + self.start)
+                    lambda x: span*x + self.lower)
             feval = evalpoints.applyfunc(f)
             s = 0
             for ii, (w, f) in enumerate(zip(self.weights, feval)):
                 s += w*f
             return np.float(s)
         else:
-            s = (self.weights*(f(span*self.points + self.start))).sum()
+            s = (self.weights*(f(span*self.points + self.lower))).sum()
             return s
 
     def update_weights(self, alpha=None):
         alpha = check_value(alpha, self.alpha, 'fractional order - alpha')
         self.alpha = alpha
-        span = self.finish - self.start
+        span = self.upper - self.lower
         # check if sympy
         if isinstance(self.points, sp.Array):
             coef = self.points.applyfunc(
@@ -144,14 +144,14 @@ class GaussLaguerre:
 # ---------------------
 class RiemannSum(object):
 
-    def __init__(self, N=5, start=0.0, finish=1.0, alpha=0.0, f=None):
+    def __init__(self, n=5, lower=0.0, upper=1.0, alpha=0.0, f=None):
         self.description = 'Riemann-Sum'
         check_alpha(alpha=alpha)
-        N = check_node_type(N)
+        n = check_node_type(n)
         self.alpha = alpha
         self.f = f
-        self.N = N
-        self.grid = self._rs_grid(start, finish, N)
+        self.n = n
+        self.grid = self._rs_grid(lower, upper, n)
         self.points = self._rs_points(grid=self.grid)
         self.weights = self._rs_weights(grid=self.grid, alpha=alpha)
 
@@ -167,8 +167,8 @@ class RiemannSum(object):
         return (self.weights*f(self.points)).sum()
 
     @classmethod
-    def _rs_grid(cls, start, finish, N):
-        return np.linspace(start=start, stop=finish, num=N)
+    def _rs_grid(cls, lower, upper, n):
+        return np.linspace(start=lower, stop=upper, num=n)
 
     @classmethod
     def _rs_points(cls, grid):
@@ -186,61 +186,61 @@ class RiemannSum(object):
 # ---------------------
 class GaussLegendreRiemannSum(object):
 
-    def __init__(self, NGLegDom=5, GLegDeg=4, NRS=20, pGLeg=0.9,
-                 start=0.0, finish=1.0, alpha=0.0, f=None):
+    def __init__(self, ndom=5, deg=4, nrs=20, percent=0.9,
+                 lower=0.0, upper=1.0, alpha=0.0, f=None):
         self.description = 'Gaussian Quadrature, Riemann-Sum'
         # setup GQ points/weights
-        switch_time = (finish - start)*pGLeg
-        self.GLeg = GaussLegendre(Ndom=NGLegDom, deg=GLegDeg, start=start,
-                                  finish=switch_time, alpha=alpha,
-                                  singularity=finish, f=f)
+        switch_time = (upper - lower)*percent
+        self.gleg = GaussLegendre(ndom=ndom, deg=deg, lower=lower,
+                                  upper=switch_time, alpha=alpha,
+                                  singularity=upper, f=f)
         # setup RS points/weights
-        self.RS = RiemannSum(N=NRS, start=switch_time,
-                             finish=finish, alpha=alpha, f=f)
+        self.rs = RiemannSum(n=nrs, lower=switch_time,
+                             upper=upper, alpha=alpha, f=f)
         self.alpha = alpha
-        self.pGLeg = pGLeg
+        self.percent = percent
         self.f = f
 
     def integrate(self, f=None):
         f = check_value(f, self.f, 'function - f')
         self.f = f
-        return self.GLeg.integrate(f=f) + self.RS.integrate(f=f)
+        return self.gleg.integrate(f=f) + self.rs.integrate(f=f)
 
     def update_weights(self, alpha=None):
         alpha = check_value(alpha, self.alpha, 'fractional order - alpha')
         self.alpha = alpha
-        self.GLeg.update_weights(alpha=alpha)
-        self.RS.update_weights(alpha=alpha)
+        self.gleg.update_weights(alpha=alpha)
+        self.rs.update_weights(alpha=alpha)
 
 
 # ---------------------
 class GaussLegendreGaussLaguerre(object):
 
-    def __init__(self, NGLegDom=5, GLegDeg=4, NGLag=20, pGLeg=0.9,
-                 start=0.0, finish=1.0, alpha=0.0, f=None,
+    def __init__(self, ndom=5, gleg_deg=4, glag_deg=20, percent=0.9,
+                 lower=0.0, upper=1.0, alpha=0.0, f=None,
                  extend_precision=True, n_digits=30):
         self.description = 'Hybrid: Gauss-Legendre, Gauss-Laguerre'
         # setup GLeg points/weights
-        switch_time = (finish - start)*pGLeg
-        self.GLeg = GaussLegendre(Ndom=NGLegDom, deg=GLegDeg, start=start,
-                                  finish=switch_time, alpha=alpha,
-                                  singularity=finish, f=f)
+        switch_time = (upper - lower)*percent
+        self.gleg = GaussLegendre(ndom=ndom, deg=gleg_deg, lower=lower,
+                                  upper=switch_time, alpha=alpha,
+                                  singularity=upper, f=f)
         # setup GLag points/weights
-        self.GLag = GaussLaguerre(N=NGLag, start=switch_time,
-                                  finish=finish, alpha=alpha, f=f,
+        self.glag = GaussLaguerre(deg=glag_deg, lower=switch_time,
+                                  upper=upper, alpha=alpha, f=f,
                                   extend_precision=extend_precision,
                                   n_digits=n_digits)
         self.alpha = alpha
-        self.pGLeg = pGLeg
+        self.percent = percent
         self.f = f
 
     def integrate(self, f=None):
         f = check_value(f, self.f, 'function - f')
         self.f = f
-        return self.GLeg.integrate(f=f) + self.GLag.integrate(f=f)
+        return self.gleg.integrate(f=f) + self.glag.integrate(f=f)
 
     def update_weights(self, alpha=None):
         alpha = check_value(alpha, self.alpha, 'fractional order - alpha')
         self.alpha = alpha
-        self.GLeg.update_weights(alpha=alpha)
-        self.GLag.update_weights(alpha=alpha)
+        self.gleg.update_weights(alpha=alpha)
+        self.glag.update_weights(alpha=alpha)
