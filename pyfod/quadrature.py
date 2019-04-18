@@ -10,7 +10,7 @@ from pyfod.utilities import check_node_type
 # ---------------------
 class GaussLegendre:
 
-    def __init__(self, Ndom=5, deg=4, start=0.0, finish=1.0,
+    def __init__(self, Ndom=5, deg=5, start=0.0, finish=1.0,
                  alpha=0.0, f=None, singularity=None):
         self.description = 'Gaussian-Legendre Quadrature'
         check_alpha(alpha)
@@ -44,13 +44,13 @@ class GaussLegendre:
     @classmethod
     def _base_gauss_points(cls, deg):
         # base points
-        gpts = np.polynomial.legendre.leggauss(deg)[0]
+        gpts = .5 + .5*np.polynomial.legendre.leggauss(deg)[0]
         return gpts
 
     @classmethod
     def _base_gauss_weights(cls, deg, h):
         # define the Gauss weights for a deg-point quadrature rule
-        w = np.polynomial.legendre.leggauss(deg)[1]*h
+        w = .5*np.polynomial.legendre.leggauss(deg)[1]*h
         return w
 
     @classmethod
@@ -73,7 +73,7 @@ class GaussLegendre:
     def _gauss_weights(self, Ndom, deg, h):
         # determine the Gauss weights for a deg-point quadrature rule
         w = self._base_gauss_weights(deg, h)
-        # copy the weights to form a vector for all N intervals
+        # copy the weights to form a vector for all Ndom intervals
         weights = w.copy()
         for gct in range(Ndom-1):
             weights = np.concatenate((weights, w))
