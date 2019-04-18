@@ -20,7 +20,7 @@ class GLegTesting(unittest.TestCase):
                             msg=str('Missing {} attribute'.format(att)))
 
     def test_update_weights(self):
-        GLeg = qm.GaussLegendre(N=10, deg=3, start=1.0, finish=12.0)
+        GLeg = qm.GaussLegendre(Ndom=10, deg=3, start=1.0, finish=12.0)
         GLeg.weights = []
         GLeg.update_weights(alpha=0.0)
         self.assertTrue(isinstance(GLeg.weights, np.ndarray),
@@ -52,7 +52,7 @@ class BaseGaussPoints(unittest.TestCase):
 class BaseGaussWeights(unittest.TestCase):
 
     def test_base_gauss_weights(self):
-        GQ = qm.GaussLegendre(N=10, deg=4, start=1.0, finish=12.0)
+        GQ = qm.GaussLegendre(Ndom=10, deg=4, start=1.0, finish=12.0)
         gwts = GQ._base_gauss_weights(deg=4, h=0.1)
         mlgwts = np.array([0.017392742256873, 0.032607257743127,
                            0.032607257743127, 0.017392742256873]).T

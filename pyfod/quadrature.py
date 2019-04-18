@@ -189,13 +189,14 @@ class RiemannSum(object):
 # ---------------------
 class GaussLegendreRiemannSum(object):
 
-    def __init__(self, NGLeg=5, NRS=20, pGLeg=0.9,
+    def __init__(self, NGLegDom=5, GlegDeg=4, NRS=20, pGLeg=0.9,
                  start=0.0, finish=1.0, alpha=0.0, f=None):
         self.description = 'Gaussian Quadrature, Riemann-Sum'
         # setup GQ points/weights
         switch_time = (finish - start)*pGLeg
-        self.GLeg = GaussLegendre(N=NGLeg, start=start, finish=switch_time,
-                                  alpha=alpha, singularity=finish, f=f)
+        self.GLeg = GaussLegendre(Ndom=NGLegDom, deg=GlegDeg, start=start,
+                                  finish=switch_time, alpha=alpha,
+                                  singularity=finish, f=f)
         # setup RS points/weights
         self.RS = RiemannSum(N=NRS, start=switch_time,
                              finish=finish, alpha=alpha, f=f)
@@ -219,14 +220,15 @@ class GaussLegendreRiemannSum(object):
 # ---------------------
 class GaussLegendreGaussLaguerre(object):
 
-    def __init__(self, NGLeg=5, NGLag=20, pGLeg=0.9,
+    def __init__(self, NGLegDom=5, GLegDeg=4, NGLag=20, pGLeg=0.9,
                  start=0.0, finish=1.0, alpha=0.0, f=None,
                  extend_precision=True, n_digits=30):
         self.description = 'Hybrid: Gauss-Legendre, Gauss-Laguerre'
         # setup GLeg points/weights
         switch_time = (finish - start)*pGLeg
-        self.GLeg = GaussLegendre(N=NGLeg, start=start, finish=switch_time,
-                                  alpha=alpha, singularity=finish, f=f)
+        self.GLeg = GaussLegendre(Ndom=NGLegDom, deg=GLegDeg, start=start,
+                                  finish=switch_time, alpha=alpha,
+                                  singularity=finish, f=f)
         # setup GLag points/weights
         self.GLag = GaussLaguerre(N=NGLag, start=switch_time,
                                   finish=finish, alpha=alpha, f=f,
