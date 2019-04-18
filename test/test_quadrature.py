@@ -78,8 +78,8 @@ class IntervalGaussPoints(unittest.TestCase):
 class GaussPoints(unittest.TestCase):
 
     def test_gauss_points(self):
-        GQ = qm.GaussLegendre(N=10, start=1.0, finish=12.0)
-        gpoints = GQ._gauss_points(N=4, h=0.1, start=0.)
+        GQ = qm.GaussLegendre(Ndom=10, start=1.0, finish=12.0)
+        gpoints = GQ._gauss_points(Ndom=4, deg=4, h=0.1, start=0.)
         self.assertEqual(gpoints.shape, (4*4,), msg='Expect shape = (16,)')
 
 
@@ -87,8 +87,8 @@ class GaussPoints(unittest.TestCase):
 class GaussWeights(unittest.TestCase):
 
     def test_gauss_weights(self):
-        GQ = qm.GaussLegendre(N=10, start=1.0, finish=12.0)
-        gweights = GQ._gauss_weights(N=4, h=0.1)
+        GQ = qm.GaussLegendre(Ndom=10, start=1.0, finish=12.0)
+        gweights = GQ._gauss_weights(Ndom=4, deg=4, h=0.1)
         self.assertEqual(gweights.shape, (4*4,), msg='Expect shape = (16,)')
 
 
