@@ -5,6 +5,7 @@ python:
 cache: pip
 install:
   - pip install flake8
+  - pip install pep8-naming
   - pip install -r requirements.txt
   - python setup.py install
 before_script: # configure a headless display to test plot generation
