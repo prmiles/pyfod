@@ -190,7 +190,7 @@ class GaussLegendreRiemannSum(object):
                  lower=0.0, upper=1.0, alpha=0.0, f=None):
         self.description = 'Gaussian Quadrature, Riemann-Sum'
         # setup GQ points/weights
-        switch_time = (upper - lower)*percent
+        switch_time = (upper - lower)*percent + lower
         self.gleg = GaussLegendre(ndom=ndom, deg=deg, lower=lower,
                                   upper=switch_time, alpha=alpha,
                                   singularity=upper, f=f)
@@ -221,7 +221,7 @@ class GaussLegendreGaussLaguerre(object):
                  extend_precision=True, n_digits=30):
         self.description = 'Hybrid: Gauss-Legendre, Gauss-Laguerre'
         # setup GLeg points/weights
-        switch_time = (upper - lower)*percent
+        switch_time = (upper - lower)*percent + lower
         self.gleg = GaussLegendre(ndom=ndom, deg=gleg_deg, lower=lower,
                                   upper=switch_time, alpha=alpha,
                                   singularity=upper, f=f)
