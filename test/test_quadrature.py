@@ -304,7 +304,8 @@ class GaussLegendreLaguerreTesting(unittest.TestCase):
                             msg=str('Missing {} attribute'.format(att)))
 
     def test_update_weights(self):
-        Q = qm.GaussLegendreGaussLaguerre(lower=1.0, upper=12.0)
+        Q = qm.GaussLegendreGaussLaguerre(lower=1.0, upper=12.0,
+                                          percent=0.9)
         Q.gleg.weights = []
         Q.glag.weights = []
         Q.update_weights(alpha=0.0)
@@ -313,6 +314,14 @@ class GaussLegendreLaguerreTesting(unittest.TestCase):
         self.assertTrue(isinstance(Q.glag.weights,
                                    object),
                         msg='Weights should be updated.')
+        self.assertEqual(Q.gleg.lower, 1.0,
+                         msg='Expect GLeg lower limit = 1.0')
+        self.assertEqual(Q.gleg.upper, (12.0-1.0)*0.9 + 1.0,
+                         msg='Expect GLeg upper limit = 10.9')
+        self.assertEqual(Q.glag.lower, (12.0-1.0)*0.9 + 1.0,
+                         msg='Expect GLag lower limit = 10.9')
+        self.assertEqual(Q.glag.upper, 12.0,
+                         msg='Expect GLag upper limit = 12.0')
 
     def test_integrate(self):
         Q = qm.GaussLegendreGaussLaguerre(lower=0.0, upper=1.0)
@@ -341,7 +350,8 @@ class GaussRiemannSumTesting(unittest.TestCase):
                             msg=str('Missing {} attribute'.format(att)))
 
     def test_update_weights(self):
-        Q = qm.GaussLegendreRiemannSum(lower=1.0, upper=12.0)
+        Q = qm.GaussLegendreRiemannSum(lower=1.0, upper=12.0,
+                                       percent=0.9)
         Q.gleg.weights = []
         Q.rs.weights = []
         Q.update_weights(alpha=0.0)
@@ -349,6 +359,14 @@ class GaussRiemannSumTesting(unittest.TestCase):
                         msg='Weights should be updated.')
         self.assertTrue(isinstance(Q.rs.weights, np.ndarray),
                         msg='Weights should be updated.')
+        self.assertEqual(Q.gleg.lower, 1.0,
+                         msg='Expect GL lower limit = 1.0')
+        self.assertEqual(Q.gleg.upper, (12.0-1.0)*0.9 + 1.0,
+                         msg='Expect GL upper limit = 10.9')
+        self.assertEqual(Q.rs.lower, (12.0-1.0)*0.9 + 1.0,
+                         msg='Expect RS lower limit = 10.9')
+        self.assertEqual(Q.rs.upper, 12.0,
+                         msg='Expect RS upper limit = 12.0')
 
     def test_integrate(self):
         Q = qm.GaussLegendreRiemannSum(lower=0.0, upper=1.0)
