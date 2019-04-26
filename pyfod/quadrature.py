@@ -18,10 +18,11 @@ class GaussLegendre:
         deg = check_node_type(deg)
         h = (upper - lower)/ndom
         self.alpha = alpha
+        self.lower = lower
+        self.upper = upper
         self.f = f
         self.ndom = ndom
         self.deg = deg
-        self.upper = upper
         self.singularity = check_singularity(singularity, self.upper)
         self.points = self._gauss_points(ndom=ndom, deg=deg, h=h, lower=lower)
         self.weights = self._gauss_weights(ndom=ndom, deg=deg, h=h)
@@ -154,6 +155,8 @@ class RiemannSum(object):
         self.grid = self._rs_grid(lower, upper, n)
         self.points = self._rs_points(grid=self.grid)
         self.weights = self._rs_weights(grid=self.grid, alpha=alpha)
+        self.lower = lower
+        self.upper = upper
 
     def update_weights(self, alpha=None):
         alpha = check_value(alpha, self.alpha, 'fractional order - alpha')
@@ -200,6 +203,7 @@ class GaussLegendreRiemannSum(object):
         self.alpha = alpha
         self.percent = percent
         self.f = f
+        self.switch_time = switch_time
 
     def integrate(self, f=None):
         f = check_value(f, self.f, 'function - f')
