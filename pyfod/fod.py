@@ -70,7 +70,7 @@ def grunwaldletnikov(f, lower, upper, dt=1e-2, alpha=0.0):
     n = np.floor((upper - lower)/dt).astype(int)
     for m in range(0, n):
         tmp = (-1.0)**m * sp.binomial(alpha, m) * (
-                f(upper + (alpha - m)*dt))
+                f(upper - m*dt))
         fd += tmp
     fd = fd/(dt**alpha)
     # assemble output
