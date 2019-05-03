@@ -6,6 +6,7 @@ import sympy as sp
 from scipy.special import gamma as sc_gamma
 from pyfod import quadrature as qm
 from pyfod.utilities import check_input as _check_input
+from pyfod.utilities import check_value as _check_value
 
 
 def riemannliouville(f, lower, upper, dt=1e-4,
@@ -57,7 +58,7 @@ def caputo(f, lower, upper, dt=1e-4, alpha=0.0,
     return dict(fd=fd, i1=integral, q1=quadobj)
 
 
-def grunwaldletnikov(f, lower, upper, dt=1e-2, alpha=0.0):
+def grunwaldletnikov(f, lower, upper, n=100, dt=None, alpha=0.0):
     '''
     Grunwald-Letnikov Fractional Derivative Calculator
     '''
@@ -65,9 +66,11 @@ def grunwaldletnikov(f, lower, upper, dt=1e-2, alpha=0.0):
     _check_input(f, 'f')
     _check_input(lower, 'lower')
     _check_input(upper, 'upper')
+    _check_value(dt, 'dt')
     # Evaluate fractional derivative
     fd = 0.0
-    n = np.floor((upper - lower)/dt).astype(int)
+    if dt is not None:
+        n = np.floor((upper - lower)/dt).astype(int)
     for m in range(0, n):
         tmp = (-1.0)**m * sp.binomial(alpha, m) * (
                 f(upper - m*dt))
