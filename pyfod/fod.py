@@ -71,6 +71,8 @@ def grunwaldletnikov(f, lower, upper, n=100, dt=None, alpha=0.0):
     fd = 0.0
     if dt is not None:
         n = np.floor((upper - lower)/dt).astype(int)
+    else:
+        dt = (upper - lower)/n
     for m in range(0, n):
         tmp = (-1.0)**m * sp.binomial(alpha, m) * (
                 f(upper - m*dt))
