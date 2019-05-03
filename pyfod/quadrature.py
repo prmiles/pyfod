@@ -84,7 +84,7 @@ class GaussLegendre:
 class GaussLaguerre:
 
     def __init__(self, deg=5, lower=0.0, upper=1.0, alpha=0.0,
-                 f=None, extend_precision=True, n_digits=30, 
+                 f=None, extend_precision=True, n_digits=30,
                  singularity=None):
         self.description = 'Gaussian-Laguerre Quadrature'
         deg = check_node_type(deg)
