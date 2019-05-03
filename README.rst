@@ -8,7 +8,7 @@ repository for performing fractional-order derivative operations.  Several diffe
 
 - Riemann-Liouville
 - Caputo (development)
-- Grünwald-Letnikov (development)
+- Grünwald-Letnikov
 
 For now, the package is designed specifically for problems where the fractional order is between 0 and 1.  Accomadating a broader range of fractional order values will be a feature added as time permits.
 
