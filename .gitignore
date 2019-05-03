@@ -3,3 +3,4 @@ __pycache__
 *.coverage
 *.pkl
 *demo/
+*docs/build/
