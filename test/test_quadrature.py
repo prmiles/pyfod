@@ -102,7 +102,7 @@ class GaussLaguerreTesting(unittest.TestCase):
     def test_init(self):
         Q = qm.GaussLaguerre(deg=10, lower=1.0, upper=12.0)
         attributes = ['points', 'weights', 'f', 'alpha',
-                      'initial_weights', 'description']
+                      'initial_weights', 'description', 'singularity']
         for att in attributes:
             self.assertTrue(hasattr(Q, att),
                             msg=str('Missing {} attribute'.format(att)))

@@ -75,7 +75,7 @@ class GaussLegendre:
         w = self._base_gauss_weights(deg, h)
         # copy the weights to form a vector for all Ndom intervals
         weights = w.copy()
-        for gct in range(ndom-1):
+        for _ in range(ndom-1):
             weights = np.concatenate((weights, w))
         return weights
 
@@ -84,13 +84,15 @@ class GaussLegendre:
 class GaussLaguerre:
 
     def __init__(self, deg=5, lower=0.0, upper=1.0, alpha=0.0,
-                 f=None, extend_precision=True, n_digits=30):
+                 f=None, extend_precision=True, n_digits=30, 
+                 singularity=None):
         self.description = 'Gaussian-Laguerre Quadrature'
         deg = check_node_type(deg)
         self.lower = lower
         self.upper = upper
         self.alpha = alpha
         self.deg = deg
+        self.singularity = check_singularity(singularity, self.upper)
         self.f = f
         if extend_precision is False:
             points, weights = np.polynomial.laguerre.laggauss(deg=deg)
@@ -118,7 +120,7 @@ class GaussLaguerre:
                     lambda x: span*x + self.lower)
             feval = evalpoints.applyfunc(f)
             s = 0
-            for ii, (w, f) in enumerate(zip(self.weights, feval)):
+            for _, (w, f) in enumerate(zip(self.weights, feval)):
                 s += w*f
             return np.float(s)
         else:
@@ -128,13 +130,13 @@ class GaussLaguerre:
     def update_weights(self, alpha=None):
         alpha = check_value(alpha, self.alpha, 'fractional order - alpha')
         self.alpha = alpha
-        span = self.upper - self.lower
+        span = self.singularity - self.lower
         # check if sympy
         if isinstance(self.points, sp.Array):
             coef = self.points.applyfunc(
                     lambda x: span**(1-alpha)*(1-x)**(-alpha))
             wtmp = []
-            for ii, (c, w) in enumerate(zip(coef, self.initial_weights)):
+            for _, (c, w) in enumerate(zip(coef, self.initial_weights)):
                 wtmp.append(c*w)
             self.weights = sp.Array(wtmp)
         else:
