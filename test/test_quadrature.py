@@ -273,8 +273,8 @@ class RiemannSumTesting(unittest.TestCase):
                         msg='Output numpy array')
         grid = RS._rs_grid(n=10, lower=1.0, upper=12.0)
         jj = grid.size - 1
-        term1 = (12.0 - grid[1:jj+1])**(1-alpha)
-        term2 = (12.0 - grid[0:jj])**(1-alpha)
+        term1 = (grid[jj] - grid[1:jj+1])**(1-alpha)
+        term2 = (grid[jj] - grid[0:jj])**(1-alpha)
         values = -1/(1-alpha)*(term1 - term2)
         self.assertTrue(np.allclose(RS.weights, values),
                         msg=str('Expect arrays equal: {} neq {}'.format(
