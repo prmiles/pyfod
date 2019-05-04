@@ -5,6 +5,7 @@ from pyfod.utilities import check_alpha
 from pyfod.utilities import check_value
 from pyfod.utilities import check_singularity
 from pyfod.utilities import check_node_type
+from pyfod.utilities import check_range
 
 
 # ---------------------
@@ -34,7 +35,7 @@ class GaussLegendre:
         self.alpha = alpha
         # update weights based on alpha
         self.weights = self.initial_weights*(
-                self.singularity - self.points)**(-alpha)
+            self.singularity - self.points)**(-alpha)
 
     def integrate(self, f=None):
         f = check_value(f, self.f, 'function - f')
@@ -99,11 +100,11 @@ class GaussLaguerre:
             self.points = 1 - np.exp(-points)
         else:
             points, weights = sp_gauss_laguerre(
-                    n=deg, n_digits=n_digits, alpha=0)
+                n=deg, n_digits=n_digits, alpha=0)
             points = [-p for p in points]
             points = sp.Array(points)
             self.points = sp.Array(
-                    np.ones(shape=len(points))) - points.applyfunc(sp.exp)
+                np.ones(shape=len(points))) - points.applyfunc(sp.exp)
             weights = sp.Array(weights)
         self.weights = weights
         self.initial_weights = weights.copy()
@@ -117,7 +118,7 @@ class GaussLaguerre:
         # check if sympy
         if isinstance(self.points, sp.Array):
             evalpoints = self.points.applyfunc(
-                    lambda x: span*x + self.lower)
+                lambda x: span*x + self.lower)
             feval = evalpoints.applyfunc(f)
             s = 0
             for _, (w, f) in enumerate(zip(self.weights, feval)):
@@ -134,7 +135,7 @@ class GaussLaguerre:
         # check if sympy
         if isinstance(self.points, sp.Array):
             coef = self.points.applyfunc(
-                    lambda x: span**(1-alpha)*(1-x)**(-alpha))
+                lambda x: span**(1-alpha)*(1-x)**(-alpha))
             wtmp = []
             for _, (c, w) in enumerate(zip(coef, self.initial_weights)):
                 wtmp.append(c*w)
@@ -191,11 +192,15 @@ class RiemannSum(object):
 # ---------------------
 class GaussLegendreRiemannSum(object):
 
-    def __init__(self, ndom=5, deg=4, nrs=20, percent=0.9,
+    def __init__(self, ndom=5, deg=4, nrs=20, percent=0.9, ts=None,
                  lower=0.0, upper=1.0, alpha=0.0, f=None):
         self.description = 'Gaussian Quadrature, Riemann-Sum'
         # setup GQ points/weights
-        switch_time = (upper - lower)*percent + lower
+        if ts is not None:
+            check_range(lower, upper, ts)
+            switch_time = ts
+        else:
+            switch_time = (upper - lower)*percent + lower
         self.gleg = GaussLegendre(ndom=ndom, deg=deg, lower=lower,
                                   upper=switch_time, alpha=alpha,
                                   singularity=upper, f=f)
@@ -222,12 +227,16 @@ class GaussLegendreRiemannSum(object):
 # ---------------------
 class GaussLegendreGaussLaguerre(object):
 
-    def __init__(self, ndom=5, gleg_deg=4, glag_deg=20, percent=0.9,
+    def __init__(self, ndom=5, gleg_deg=4, glag_deg=20, percent=0.9, ts=None,
                  lower=0.0, upper=1.0, alpha=0.0, f=None,
                  extend_precision=True, n_digits=30):
         self.description = 'Hybrid: Gauss-Legendre, Gauss-Laguerre'
         # setup GLeg points/weights
-        switch_time = (upper - lower)*percent + lower
+        if ts is not None:
+            check_range(lower, upper, ts)
+            switch_time = ts
+        else:
+            switch_time = (upper - lower)*percent + lower
         self.gleg = GaussLegendre(ndom=ndom, deg=gleg_deg, lower=lower,
                                   upper=switch_time, alpha=alpha,
                                   singularity=upper, f=f)

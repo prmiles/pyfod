@@ -41,3 +41,9 @@ class Utilities(unittest.TestCase):
         self.assertEqual(a, f, msg='Expect user defined return')
         a = ut.check_value(value=None, default_value=f)
         self.assertEqual(a, f, msg='Expect default return')
+
+    def test_check_range(self):
+        with self.assertRaises(SystemExit):
+            ut.check_range(0., 1., 2.)
+        a = ut.check_value(0., 1., 0.5)
+        self.assertEqual(a, 0.5, msg='Expect default return')

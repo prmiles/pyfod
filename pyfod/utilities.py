@@ -27,6 +27,13 @@ def check_value(value, default_value, varname=None):
     return value
 
 
+def check_range(lower, upper, value):
+    if lower <= value <= upper:
+        return value
+    else:
+        sys.exit(str('Switch time out of domain'))
+
+
 def check_input(value, varname=None):
     if value is None:
         sys.exit(str('No value defined. '
