@@ -69,8 +69,8 @@ class IntervalGaussPoints(unittest.TestCase):
     def test_interval_gauss_points(self):
         GQ = qm.GaussLegendre(ndom=10, deg=4, lower=1.0, upper=12.0)
         igp = GQ._interval_gauss_points(
-                base_gpts=GQ._base_gauss_points(deg=4),
-                ndom=4, deg=4, h=0.1, lower=0.)
+            base_gpts=GQ._base_gauss_points(deg=4),
+            ndom=4, deg=4, h=0.1, lower=0.)
         self.assertEqual(igp.shape, (4*4,), msg='Expect shape = (16,)')
 
 
@@ -228,7 +228,8 @@ class RiemannSumTesting(unittest.TestCase):
 
     def test_init(self):
         RS = qm.RiemannSum(n=10, lower=1.0, upper=12.0)
-        attributes = ['points', 'weights', 'f', 'alpha', 'grid', 'description']
+        attributes = ['points', 'weights', 'f', 'alpha', 'grid', 'description',
+                      'singularity']
         for att in attributes:
             self.assertTrue(hasattr(RS, att),
                             msg=str('Missing {} attribute'.format(att)))
@@ -272,9 +273,9 @@ class RiemannSumTesting(unittest.TestCase):
                         msg='Output numpy array')
         grid = RS._rs_grid(n=10, lower=1.0, upper=12.0)
         jj = grid.size - 1
-        term2 = (grid[jj] - grid[1:jj+1])**(1-alpha)
-        term3 = (grid[jj] - grid[0:jj])**(1-alpha)
-        values = -1/(1-alpha)*(term2 - term3)
+        term1 = (12.0 - grid[1:jj+1])**(1-alpha)
+        term2 = (12.0 - grid[0:jj])**(1-alpha)
+        values = -1/(1-alpha)*(term1 - term2)
         self.assertTrue(np.allclose(RS.weights, values),
                         msg=str('Expect arrays equal: {} neq {}'.format(
                                 RS.weights, values)))

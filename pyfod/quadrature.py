@@ -148,24 +148,30 @@ class GaussLaguerre:
 # ---------------------
 class RiemannSum(object):
 
-    def __init__(self, n=5, lower=0.0, upper=1.0, alpha=0.0, f=None):
+    def __init__(self, n=5, lower=0.0, upper=1.0, alpha=0.0, f=None,
+                 singularity=None):
         self.description = 'Riemann-Sum'
         check_alpha(alpha=alpha)
         n = check_node_type(n)
         self.alpha = alpha
         self.f = f
         self.n = n
-        self.grid = self._rs_grid(lower, upper, n)
-        self.points = self._rs_points(grid=self.grid)
-        self.weights = self._rs_weights(grid=self.grid, alpha=alpha)
         self.lower = lower
         self.upper = upper
+        self.singularity = check_singularity(singularity, self.upper)
+        self.grid = self._rs_grid(lower, upper, n)
+        self.points = self._rs_points(grid=self.grid)
+        self.weights = self._rs_weights(grid=self.grid,
+                                        singularity=self.singularity,
+                                        alpha=alpha)
 
     def update_weights(self, alpha=None):
         alpha = check_value(alpha, self.alpha, 'fractional order - alpha')
         check_alpha(alpha=alpha)
         self.alpha = alpha
-        self.weights = self._rs_weights(grid=self.grid, alpha=alpha)
+        self.weights = self._rs_weights(grid=self.grid,
+                                        singularity=self.singularity,
+                                        alpha=alpha)
 
     def integrate(self, f=None):
         f = check_value(f, self.f, 'function - f')
@@ -182,11 +188,11 @@ class RiemannSum(object):
         return (grid[1:jj+1] + grid[0:jj])/2
 
     @classmethod
-    def _rs_weights(cls, grid, alpha=0.0):
+    def _rs_weights(cls, grid, singularity, alpha=0.0):
         jj = grid.size - 1
-        term2 = (grid[jj] - grid[1:jj+1])**(1-alpha)
-        term3 = (grid[jj] - grid[0:jj])**(1-alpha)
-        return -1/(1-alpha)*(term2 - term3)
+        term1 = (singularity - grid[1:jj+1])**(1-alpha)
+        term2 = (singularity - grid[0:jj])**(1-alpha)
+        return -1/(1-alpha)*(term1 - term2)
 
 
 # ---------------------
@@ -197,8 +203,7 @@ class GaussLegendreRiemannSum(object):
         self.description = 'Gaussian Quadrature, Riemann-Sum'
         # setup GQ points/weights
         if ts is not None:
-            check_range(lower, upper, ts)
-            switch_time = ts
+            switch_time = check_range(lower, upper, ts)
         else:
             switch_time = (upper - lower)*percent + lower
         self.gleg = GaussLegendre(ndom=ndom, deg=deg, lower=lower,
@@ -233,8 +238,7 @@ class GaussLegendreGaussLaguerre(object):
         self.description = 'Hybrid: Gauss-Legendre, Gauss-Laguerre'
         # setup GLeg points/weights
         if ts is not None:
-            check_range(lower, upper, ts)
-            switch_time = ts
+            switch_time = check_range(lower, upper, ts)
         else:
             switch_time = (upper - lower)*percent + lower
         self.gleg = GaussLegendre(ndom=ndom, deg=gleg_deg, lower=lower,
