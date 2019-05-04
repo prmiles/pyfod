@@ -45,5 +45,5 @@ class Utilities(unittest.TestCase):
     def test_check_range(self):
         with self.assertRaises(SystemExit):
             ut.check_range(0., 1., 2.)
-        a = ut.check_value(0., 1., 0.5)
+        a = ut.check_range(0., 1., 0.5)
         self.assertEqual(a, 0.5, msg='Expect default return')
