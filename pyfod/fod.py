@@ -1,5 +1,24 @@
 # -*- coding: utf-8 -*-
+'''
+This module provides support for three common definitions of fractional
+derivative in the limiting case of :math:`\\alpha \\in [0,1)`.  The
+definitions available include:
 
+    * Riemann-Liouville - :func:`riemannliouville`
+    * Caputo - :func:`caputo`
+    * Grünwald-Letnikov - :func:`grunwaldletnikov`
+
+For more details regarding this definitions of fractional derivatives
+please see :cite:`podlubny1998fractional`.
+
+.. note::
+    In each method you are required to provide a function handle.  Depending
+    on the method being used, you may need to define your function using
+    sympy_ to allow for extended numerical precision.
+
+.. _sympy: https://www.sympy.org/en/index.html
+
+'''
 import sys
 import numpy as np
 import sympy as sp
@@ -11,7 +30,60 @@ from pyfod.utilities import check_input as _check_input
 def riemannliouville(f, lower, upper, dt=1e-4,
                      alpha=0.0, quadrature='GLegRS', **kwargs):
     '''
-    Riemann-Liouville Fractional Derivative Calculator
+    Riemann-Liouville fractional derivative calculator for
+    :math:`\\alpha \\in [0,1)`.
+
+    The general definition for Riemann-Liouville fractional derivative
+    is
+
+    .. math::
+
+        D_{RL}^\\alpha[f(t)] = \\frac{1}{\\Gamma(n-\\alpha)}
+        \\frac{d^n}{dt^n}\\int_0^t\\frac{f(s)}{(t-s)^{\\alpha+1-n}}ds,
+
+    where :math:`n = \\lceil\\alpha\\rceil`. In the limiting case where
+    :math:`\\alpha \\in [0, 1)` this further simplifies to
+
+    .. math::
+
+        D_{RL}^\\alpha[f(t)] = \\frac{1}{\\Gamma(1-\\alpha)}
+        \\frac{d}{dt}\\int_0^t\\frac{f(s)}{(t-s)^{\\alpha}}ds.
+
+    By defining
+
+    .. math::
+        F[t] = \\int_{t_0}^t(t-s)^{-\\alpha}f(s)ds,
+
+    we can numerically approximate this definition of fractional
+    derivative as
+
+    .. math::
+
+        D_{RL}^\\alpha[f(t)] = \\chi\\frac{d}{dt}F[t] \\approx
+        \\chi\\frac{F(t_{j+1}) - F(t_{j})}{t_{j+1}-t_{j}},
+
+    where :math:`\\chi = \\Gamma(1-\\alpha)^{-1}`.  For more details regarding
+    this approach please see :cite:`atangana2017numerical`
+    and :cite:`miles2018numerical`.
+
+    Args:
+        * **f** (def): Function handle.
+        * **lower** (:py:class:`float`): Lower limit - should be zero.
+        * **upper** (:py:class:`float`): Upper limit, i.e., point at which
+          fractional derivative is being evaluated.
+
+    Kwargs: name (type) - default
+        * **dt** (:py:class:`float`) - `1e-4`: Time step, :math:`t_{j+1}-t_j`.
+        * **alpha** (:py:class:`float`) - `0`: Order of fractional derivative.
+        * **quadrature** (:py:class:`str`) - `'glegrs'`: Quadrature method
+        * **kwargs**: Quadrature specific settings.
+
+    Returns: :py:class:`dict`
+        * `fd`: Fractional derivative
+        * `i1`: Value of integral :math:`F(t_{j+1})`.
+        * `i2`: Value of integral :math:`F(t_j)`.
+        * `q1`: Quadrature object for :math:`F(t_{j+1})`.
+        * `q2`: Quadrature object for :math:`F(t_{j})`.
     '''
     quad = _select_quadrature_method(quadrature)
     q1 = quad(lower=lower, upper=upper, alpha=alpha, **kwargs)
@@ -35,7 +107,46 @@ def riemannliouville(f, lower, upper, dt=1e-4,
 def caputo(f, lower, upper, dt=1e-4, alpha=0.0,
            df=None, quadrature='GLegRS', **kwargs):
     '''
-    Caputo Fractional Derivative Calculator
+    Caputo fractional derivative calculator for
+    :math:`\\alpha \\in [0,1)`.
+    
+    The general definition for Caputo fractional derivative
+    is
+
+    .. math::
+
+        D_{C}^\\alpha[f(t)] = \\frac{1}{\\Gamma(n-\\alpha)}
+        \\int_0^t\\frac{f(s)^{(n)}}{(t-s)^{\\alpha+1-n}}ds,
+
+    where :math:`n = \\lceil\\alpha\\rceil`. In the limiting case where
+    :math:`\\alpha \\in [0, 1)` this further simplifies to
+
+    .. math::
+
+        D_{RL}^\\alpha[f(t)] = \\frac{1}{\\Gamma(1-\\alpha)}
+        \\int_0^t\\frac{f(s)^{(1)}}{(t-s)^{\\alpha}}ds.
+
+    To evaluate this we simply need to define a finite-difference scheme
+    for approximating :math:`f(s)^{(1)}`.
+
+    Args:
+        * **f** (def): Function handle.
+        * **lower** (:py:class:`float`): Lower limit - should be zero.
+        * **upper** (:py:class:`float`): Upper limit, i.e., point at which
+          fractional derivative is being evaluated.
+
+    Kwargs: name (type) - default
+        * **dt** (:py:class:`float`) - `1e-4`: Time step, :math:`t_{j+1}-t_j`.
+        * **alpha** (:py:class:`float`) - `0`: Order of fractional derivative.
+        * **df** (def) - `None`: Finite difference function.  See tutorials
+          for examples of how to utilize this feature.
+        * **quadrature** (:py:class:`str`) - `'glegrs'`: Quadrature method
+        * **kwargs**: Quadrature specific settings.
+
+    Returns: :py:class:`dict`
+        * `fd`: Fractional derivative.
+        * `i1`: Value of integral.
+        * `q1`: Quadrature object.
     '''
     # Check finite difference function
     df = _setup_finite_difference(df, f, dt)
@@ -59,7 +170,37 @@ def caputo(f, lower, upper, dt=1e-4, alpha=0.0,
 
 def grunwaldletnikov(f, lower, upper, n=100, dt=None, alpha=0.0):
     '''
-    Grunwald-Letnikov Fractional Derivative Calculator
+    Grünwald-Letnikov fractional derivative calculator.
+
+    We have implemented the reverse Grünwald-Letnikov definition.
+
+    .. math::
+
+        D_G^\\alpha [f(t)]=\\lim_{h\\rightarrow 0}\\frac{1}{h^\\alpha}
+        \\sum_{0\\leq m< \\infty}(-1)^m\\binom{\\alpha}{m}f(t-mh).
+
+    .. note::
+        The package as a whole was built for problems where
+        :math:`\\alpha \\in [0, 1)`; however, this definition for
+        Grünwald-Letnikov does not necessarily have the same constraints.
+        It has not been tested for values of :math:`\\alpha \ge 1`,
+        but in principle it will work.
+
+    Args:
+        * **f** (def): Function handle.
+        * **lower** (:py:class:`float`): Lower limit - should be zero.
+        * **upper** (:py:class:`float`): Upper limit, i.e., point at which
+          fractional derivative is being evaluated.
+
+    Kwargs: name (type) - default
+        * **n** (:py:class:`int`) - `100`: Number of terms to be used in
+          approximation.
+        * **dt** (:py:class:`float`) - `1e-4`: Time step. If `dt is None`,
+          then the value of `dt` will be `(upper - lower)/n`.
+        * **alpha** (:py:class:`float`) - `0`: Order of fractional derivative.
+
+    Returns: :py:class:`dict`
+        * `fd`: Fractional derivative.
     '''
     # Check user input
     _check_input(f, 'f')
