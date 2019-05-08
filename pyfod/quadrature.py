@@ -1,3 +1,32 @@
+'''
+This module contains a variety of classes for performing quadrature. While this
+module was developed to support the fractional derivative calculators in
+:mod:`~.fod`, the quadrature methods themselves are still applicable to a
+wide variety of integration problems.
+
+The quadrature methods are defined to approximate integrals of the form
+
+.. math::
+
+    I = \\int_{t_0}^{t}\\frac{f(t)}{(b-s)^{\\alpha}}ds,
+
+where :math:`b` is typically equal to :math:`t`.  The user is only required
+to provide the function :math:`f(t)` and the limits of integration.
+We observe that by setting :math:`\\alpha = 0`, this integral is transformed to
+
+.. math::
+
+    I = \\int_{t_0}^{t}f(t)ds,
+
+which is applicable to many problems.
+
+Classes:
+    * :class:`~GaussLegendre`
+    * :class:`~GaussLaguerre`
+    * :class:`~RiemannSum`
+    * :class:`~GaussLegendreRiemannSum`
+    * :class:`~GaussLegendreGaussLaguerre`
+'''
 import numpy as np
 import sympy as sp
 from sympy.integrals.quadrature import gauss_gen_laguerre as sp_gauss_laguerre
@@ -10,6 +39,17 @@ from pyfod.utilities import check_range
 
 # ---------------------
 class GaussLegendre:
+    '''
+    Gauss-Legendre quadrature.
+    
+    Kwargs: name (type) - default
+        * **ndom** (:py:class:`int`) - `5`: Number of quadrature intervals.
+        * **deg** (:py:class:`int`) - `5`: Degree of legendre polynomials.
+        * **lower** (:py:class:`float`) - `0.0`: Lower limit of integration.
+        * **upper** (:py:class:`float`) - `1.0`: Upper limit of integration.
+        * **alpha** (:py:class:`float`) - `0.0`: Exponent of singular kernel.
+        * **singularity** (:py:class:`float`) - `None`: Location of singularity.
+    '''
 
     def __init__(self, ndom=5, deg=5, lower=0.0, upper=1.0,
                  alpha=0.0, f=None, singularity=None):
@@ -31,6 +71,16 @@ class GaussLegendre:
         self.update_weights(alpha=alpha)
 
     def update_weights(self, alpha=None):
+        '''
+        Update quadrature weights.
+
+        The quadrature weights are a function of :math:`\\alpha`.  To
+        facilitate usage of the quadrature object, you can update the
+        weights with a new alpha without creating a whole new object.
+
+        Args:
+            * **alpha** (:py:class:`float`): Exponent of singular kernel.
+        '''
         alpha = check_value(alpha, self.alpha, 'fractional order - alpha')
         self.alpha = alpha
         # update weights based on alpha
@@ -38,6 +88,15 @@ class GaussLegendre:
             self.singularity - self.points)**(-alpha)
 
     def integrate(self, f=None):
+        '''
+        Evaluate the integral.
+
+        The user can assign a function during initial creation of the
+        quadrature object, or they can send it here.
+
+        Kwargs: name (type) - default
+            * **f** (def) - `None`: Function handle.
+        '''
         f = check_value(f, self.f, 'function - f')
         self.f = f
         return (self.weights*f(self.points)).sum()
