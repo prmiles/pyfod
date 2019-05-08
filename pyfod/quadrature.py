@@ -48,6 +48,7 @@ class GaussLegendre:
         * **lower** (:py:class:`float`) - `0.0`: Lower limit of integration.
         * **upper** (:py:class:`float`) - `1.0`: Upper limit of integration.
         * **alpha** (:py:class:`float`) - `0.0`: Exponent of singular kernel.
+        * **f** (def) - `None`: Function handle.
         * **singularity** (:py:class:`float`) - `None`:
           Location of singularity.
     '''
@@ -77,7 +78,8 @@ class GaussLegendre:
 
         The quadrature weights are a function of :math:`\\alpha`.  To
         facilitate usage of the quadrature object, you can update the
-        weights with a new alpha without creating a whole new object.
+        weights with a new :math:`\\alpha` without creating a whole
+        new object.
 
         Args:
             * **alpha** (:py:class:`float`): Exponent of singular kernel.
@@ -97,6 +99,10 @@ class GaussLegendre:
 
         Kwargs: name (type) - default
             * **f** (def) - `None`: Function handle.
+
+        .. note::
+            The function, **f**, should output an array, with
+            shape (n,) or (n, 1).
         '''
         f = check_value(f, self.f, 'function - f')
         self.f = f
@@ -143,7 +149,22 @@ class GaussLegendre:
 
 # ---------------------
 class GaussLaguerre:
+    '''
+    Gauss-Laguerre quadrature.
 
+    Kwargs: name (type) - default
+        * **deg** (:py:class:`int`) - `5`: Degree of laguerre polynomials.
+        * **lower** (:py:class:`float`) - `0.0`: Lower limit of integration.
+        * **upper** (:py:class:`float`) - `1.0`: Upper limit of integration.
+        * **alpha** (:py:class:`float`) - `0.0`: Exponent of singular kernel.
+        * **f** (def) - `None`: Function handle.
+        * **extend_precision** (:py:class:`bool`) - `True`: Flag to use
+          sympy extended precision.
+        * **n_digits** (:py:class:`int`) - `30`: Number of digits in extended
+          precision.
+        * **singularity** (:py:class:`float`) - `None`:
+          Location of singularity.
+    '''
     def __init__(self, deg=5, lower=0.0, upper=1.0, alpha=0.0,
                  f=None, extend_precision=True, n_digits=30,
                  singularity=None):
@@ -226,6 +247,17 @@ class RiemannSum(object):
                                         alpha=alpha)
 
     def update_weights(self, alpha=None):
+        '''
+        Update quadrature weights.
+
+        The quadrature weights are a function of :math:`\\alpha`.  To
+        facilitate usage of the quadrature object, you can update the
+        weights with a new :math:`\\alpha` without creating a whole
+        new object.
+
+        Args:
+            * **alpha** (:py:class:`float`): Exponent of singular kernel.
+        '''
         alpha = check_value(alpha, self.alpha, 'fractional order - alpha')
         check_alpha(alpha=alpha)
         self.alpha = alpha
@@ -234,6 +266,19 @@ class RiemannSum(object):
                                         alpha=alpha)
 
     def integrate(self, f=None):
+        '''
+        Evaluate the integral.
+
+        The user can assign a function during initial creation of the
+        quadrature object, or they can send it here.
+
+        Kwargs: name (type) - default
+            * **f** (def) - `None`: Function handle.
+
+        .. note::
+            The function, **f**, should output an array, with
+            shape (n,) or (n, 1).
+        '''
         f = check_value(f, self.f, 'function - f')
         self.f = f
         return (self.weights*f(self.points)).sum()
@@ -278,11 +323,35 @@ class GaussLegendreRiemannSum(object):
         self.switch_time = switch_time
 
     def integrate(self, f=None):
+        '''
+        Evaluate the integral.
+
+        The user can assign a function during initial creation of the
+        quadrature object, or they can send it here.
+
+        Kwargs: name (type) - default
+            * **f** (def) - `None`: Function handle.
+
+        .. note::
+            The function, **f**, should output an array, with
+            shape (n,) or (n, 1).
+        '''
         f = check_value(f, self.f, 'function - f')
         self.f = f
         return self.gleg.integrate(f=f) + self.rs.integrate(f=f)
 
     def update_weights(self, alpha=None):
+        '''
+        Update quadrature weights.
+
+        The quadrature weights are a function of :math:`\\alpha`.  To
+        facilitate usage of the quadrature object, you can update the
+        weights with a new :math:`\\alpha` without creating a whole
+        new object.
+
+        Args:
+            * **alpha** (:py:class:`float`): Exponent of singular kernel.
+        '''
         alpha = check_value(alpha, self.alpha, 'fractional order - alpha')
         self.alpha = alpha
         self.gleg.update_weights(alpha=alpha)
