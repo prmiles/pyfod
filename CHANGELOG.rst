@@ -1,6 +1,16 @@
 Changelog
 =========
 
+v0.1.0 (May 8, 2019)
+--------------------
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.2678040.svg
+   :target: https://doi.org/10.5281/zenodo.2678040
+- Verified Grunwald-Letnikov implementation.
+- Followed flake8, PEP8 naming conventions.
+- Added user defined switch time to hybrid quadrature methods.
+- Resolved #22 regarding function output of (n,) vs. (n,1) arrays.
+- Allow for user defined singularity location not at upper limit.
+   
 v0.0.1 (April 29, 2019)
 -----------------------
 .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.2653837.svg
