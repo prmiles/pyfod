@@ -22,9 +22,9 @@ class Utilities(unittest.TestCase):
         self.assertEqual(ut.check_alpha(alpha=0.5), None, msg='Expect None')
 
     def test_check_singularity(self):
-        a = ut.check_singularity(singularity=None, finish=1.0)
+        a = ut.check_singularity(singularity=None, upper=1.0)
         self.assertEqual(a, 1.0, msg='Expect finish')
-        a = ut.check_singularity(singularity=0.5, finish=1.0)
+        a = ut.check_singularity(singularity=0.5, upper=1.0)
         self.assertEqual(a, 0.5, msg='Expect user defined')
 
     def test_check_node_type(self):
