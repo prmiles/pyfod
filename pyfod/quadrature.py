@@ -126,7 +126,8 @@ class GaussLaguerre:
                 s += w*f
             return np.float(s)
         else:
-            feval = f(span*self.points + self.lower).reshape(self.weights.shape)
+            feval = f(span*self.points + self.lower).reshape(
+                    self.weights.shape)
             s = (self.weights*(feval)).sum()
             return s
 
