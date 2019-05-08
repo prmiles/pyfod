@@ -66,7 +66,6 @@ def grunwaldletnikov(f, lower, upper, n=100, dt=None, alpha=0.0):
     _check_input(f, 'f')
     _check_input(lower, 'lower')
     _check_input(upper, 'upper')
-    _check_value(dt, 'dt')
     # Evaluate fractional derivative
     fd = 0.0
     if dt is not None:
