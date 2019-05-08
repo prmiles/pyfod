@@ -6,7 +6,6 @@ import sympy as sp
 from scipy.special import gamma as sc_gamma
 from pyfod import quadrature as qm
 from pyfod.utilities import check_input as _check_input
-from pyfod.utilities import check_value as _check_value
 
 
 def riemannliouville(f, lower, upper, dt=1e-4,
