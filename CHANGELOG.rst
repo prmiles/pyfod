@@ -1,6 +1,12 @@
 Changelog
 =========
 
+v0.0.1 (April 29, 2019)
+-----------------------
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.2653837.svg
+   :target: https://doi.org/10.5281/zenodo.2653837
+- Fixed bug with hybrid quadrature methods for handling problems where lower limit does not equal 0.
+
 v0.0.0 (April 25, 2019)
 ----------------------
 .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.2651275.svg
