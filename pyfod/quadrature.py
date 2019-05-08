@@ -41,14 +41,15 @@ from pyfod.utilities import check_range
 class GaussLegendre:
     '''
     Gauss-Legendre quadrature.
-    
+
     Kwargs: name (type) - default
         * **ndom** (:py:class:`int`) - `5`: Number of quadrature intervals.
         * **deg** (:py:class:`int`) - `5`: Degree of legendre polynomials.
         * **lower** (:py:class:`float`) - `0.0`: Lower limit of integration.
         * **upper** (:py:class:`float`) - `1.0`: Upper limit of integration.
         * **alpha** (:py:class:`float`) - `0.0`: Exponent of singular kernel.
-        * **singularity** (:py:class:`float`) - `None`: Location of singularity.
+        * **singularity** (:py:class:`float`) - `None`:
+          Location of singularity.
     '''
 
     def __init__(self, ndom=5, deg=5, lower=0.0, upper=1.0,

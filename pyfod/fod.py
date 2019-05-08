@@ -109,7 +109,7 @@ def caputo(f, lower, upper, dt=1e-4, alpha=0.0,
     '''
     Caputo fractional derivative calculator for
     :math:`\\alpha \\in [0,1)`.
-    
+
     The general definition for Caputo fractional derivative
     is
 
@@ -183,7 +183,7 @@ def grunwaldletnikov(f, lower, upper, n=100, dt=None, alpha=0.0):
         The package as a whole was built for problems where
         :math:`\\alpha \\in [0, 1)`; however, this definition for
         Grünwald-Letnikov does not necessarily have the same constraints.
-        It has not been tested for values of :math:`\\alpha \ge 1`,
+        It has not been tested for values of :math:`\\alpha \\ge 1`,
         but in principle it will work.
 
     Args:
