@@ -40,7 +40,8 @@ class GaussLegendre:
     def integrate(self, f=None):
         f = check_value(f, self.f, 'function - f')
         self.f = f
-        return (self.weights*f(self.points)).sum()
+        feval = f(self.points).reshape(self.weights.shape)
+        return (self.weights*feval).sum()
 
     @classmethod
     def _base_gauss_points(cls, deg):
@@ -125,7 +126,8 @@ class GaussLaguerre:
                 s += w*f
             return np.float(s)
         else:
-            s = (self.weights*(f(span*self.points + self.lower))).sum()
+            feval = f(span*self.points + self.lower).reshape(self.weights.shape)
+            s = (self.weights*(feval)).sum()
             return s
 
     def update_weights(self, alpha=None):
@@ -176,7 +178,8 @@ class RiemannSum(object):
     def integrate(self, f=None):
         f = check_value(f, self.f, 'function - f')
         self.f = f
-        return (self.weights*f(self.points)).sum()
+        feval = f(self.points).reshape(self.weights.shape)
+        return (self.weights*feval).sum()
 
     @classmethod
     def _rs_grid(cls, lower, upper, n):
