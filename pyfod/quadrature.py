@@ -52,7 +52,6 @@ class GaussLegendre:
         * **singularity** (:py:class:`float`) - `None`:
           Location of singularity.
     '''
-
     def __init__(self, ndom=5, deg=5, lower=0.0, upper=1.0,
                  alpha=0.0, f=None, singularity=None):
         self.description = 'Gaussian-Legendre Quadrature'
@@ -193,6 +192,19 @@ class GaussLaguerre:
         self.update_weights(alpha=alpha)
 
     def integrate(self, f=None):
+        '''
+        Evaluate the integral.
+
+        The user can assign a function during initial creation of the
+        quadrature object, or they can send it here.
+
+        Kwargs: name (type) - default
+            * **f** (def) - `None`: Function handle.
+
+        .. note::
+            The function, **f**, should output an array, with
+            shape (n,) or (n, 1).
+        '''
         f = check_value(f, self.f, 'function - f')
         self.f = f
         # transform kernel
@@ -213,6 +225,17 @@ class GaussLaguerre:
             return s
 
     def update_weights(self, alpha=None):
+        '''
+        Update quadrature weights.
+
+        The quadrature weights are a function of :math:`\\alpha`.  To
+        facilitate usage of the quadrature object, you can update the
+        weights with a new :math:`\\alpha` without creating a whole
+        new object.
+
+        Args:
+            * **alpha** (:py:class:`float`): Exponent of singular kernel.
+        '''
         alpha = check_value(alpha, self.alpha, 'fractional order - alpha')
         self.alpha = alpha
         span = self.singularity - self.lower
@@ -231,7 +254,18 @@ class GaussLaguerre:
 
 # ---------------------
 class RiemannSum(object):
+    '''
+    Riemann-Sum quadrature.
 
+    Kwargs: name (type) - default
+        * **n** (:py:class:`int`) - `5`: Number of quadrature intervals.
+        * **lower** (:py:class:`float`) - `0.0`: Lower limit of integration.
+        * **upper** (:py:class:`float`) - `1.0`: Upper limit of integration.
+        * **alpha** (:py:class:`float`) - `0.0`: Exponent of singular kernel.
+        * **f** (def) - `None`: Function handle.
+        * **singularity** (:py:class:`float`) - `None`:
+          Location of singularity.
+    '''
     def __init__(self, n=5, lower=0.0, upper=1.0, alpha=0.0, f=None,
                  singularity=None):
         self.description = 'Riemann-Sum'
@@ -306,7 +340,24 @@ class RiemannSum(object):
 
 # ---------------------
 class GaussLegendreRiemannSum(object):
+    '''
+    Gauss-Legendre, Riemann-Sum quadrature.
 
+    Kwargs: name (type) - default
+        * **ndom** (:py:class:`int`) - `5`: Number of Gauss-Legendre
+          quadrature intervals.
+        * **deg** (:py:class:`int`) - `4`: Degree of legendre polynomials.
+        * **nrs** (:py:class:`int`) - `20`: Number of Riemann-Sum
+          quadrature intervals.
+        * **percent** (:py:class:`float`) - `0.9`: Percentage of interval
+          in which to use Gauss-Legendre method.
+        * **ts** (:py:class:`float`) - `None`: User-defined time to switch
+          from Gauss-Legendre to Riemann-Sum quadrature.
+        * **lower** (:py:class:`float`) - `0.0`: Lower limit of integration.
+        * **upper** (:py:class:`float`) - `1.0`: Upper limit of integration.
+        * **alpha** (:py:class:`float`) - `0.0`: Exponent of singular kernel.
+        * **f** (def) - `None`: Function handle.
+    '''
     def __init__(self, ndom=5, deg=4, nrs=20, percent=0.9, ts=None,
                  lower=0.0, upper=1.0, alpha=0.0, f=None):
         self.description = 'Gaussian Quadrature, Riemann-Sum'
@@ -364,7 +415,28 @@ class GaussLegendreRiemannSum(object):
 
 # ---------------------
 class GaussLegendreGaussLaguerre(object):
+    '''
+    Gauss-Legendre, Gauss-Laguerre quadrature.
 
+    Kwargs: name (type) - default
+        * **ndom** (:py:class:`int`) - `5`: Number of Gauss-Legendre
+          quadrature intervals.
+        * **gleg_deg** (:py:class:`int`) - `4`: Degree of legendre polynomials.
+        * **glag_deg** (:py:class:`int`) - `20`: Degree of laguerre
+          polynomials.
+        * **percent** (:py:class:`float`) - `0.9`: Percentage of interval
+          in which to use Gauss-Legendre method.
+        * **ts** (:py:class:`float`) - `None`: User-defined time to switch
+          from Gauss-Legendre to Riemann-Sum quadrature.
+        * **lower** (:py:class:`float`) - `0.0`: Lower limit of integration.
+        * **upper** (:py:class:`float`) - `1.0`: Upper limit of integration.
+        * **alpha** (:py:class:`float`) - `0.0`: Exponent of singular kernel.
+        * **f** (def) - `None`: Function handle.
+        * **extend_precision** (:py:class:`bool`) - `True`: Flag to use
+          sympy extended precision.
+        * **n_digits** (:py:class:`int`) - `30`: Number of digits in extended
+          precision.
+    '''
     def __init__(self, ndom=5, gleg_deg=4, glag_deg=20, percent=0.9, ts=None,
                  lower=0.0, upper=1.0, alpha=0.0, f=None,
                  extend_precision=True, n_digits=30):
@@ -387,11 +459,35 @@ class GaussLegendreGaussLaguerre(object):
         self.f = f
 
     def integrate(self, f=None):
+        '''
+        Evaluate the integral.
+
+        The user can assign a function during initial creation of the
+        quadrature object, or they can send it here.
+
+        Kwargs: name (type) - default
+            * **f** (def) - `None`: Function handle.
+
+        .. note::
+            The function, **f**, should output an array, with
+            shape (n,) or (n, 1).
+        '''
         f = check_value(f, self.f, 'function - f')
         self.f = f
         return self.gleg.integrate(f=f) + self.glag.integrate(f=f)
 
     def update_weights(self, alpha=None):
+        '''
+        Update quadrature weights.
+
+        The quadrature weights are a function of :math:`\\alpha`.  To
+        facilitate usage of the quadrature object, you can update the
+        weights with a new :math:`\\alpha` without creating a whole
+        new object.
+
+        Args:
+            * **alpha** (:py:class:`float`): Exponent of singular kernel.
+        '''
         alpha = check_value(alpha, self.alpha, 'fractional order - alpha')
         self.alpha = alpha
         self.gleg.update_weights(alpha=alpha)
