@@ -1,7 +1,7 @@
 `pyfod`
 =======
 
-|docs| |build| |coverage| |zenodo|
+|docs| |build| |coverage| |license| |zenodo|
 
 The `pyfod <https://github.com/prmiles/pyfod/wiki>`_ package is a Python
 repository for performing fractional-order derivative operations.  Several different definitions of fractional derivative are available within the package:
@@ -48,3 +48,6 @@ Feedback
 
 .. |zenodo| image:: https://zenodo.org/badge/175037345.svg
     :target: https://zenodo.org/badge/latestdoi/175037345
+
+.. |license| image:: https://img.shields.io/badge/License-MIT-yellow.svg
+    :target: https://github.com/prmiles/pyfod/blob/master/LICENSE
