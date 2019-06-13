@@ -26,7 +26,7 @@ You can also clone the repository and run ``python  setup.py install``.
 Getting Started
 ===============
 
-- `Tutorial notebooks <https://nbviewer.jupyter.org/github/prmiles/notebooks/tree/master/pyfod/index.ipynb>`_
+- `Tutorial notebooks <https://nbviewer.jupyter.org/github/prmiles/pyfod/tree/master/tutorials/index.ipynb>`_
 - `Release history`_
 
 .. _Release history: CHANGELOG.rst
