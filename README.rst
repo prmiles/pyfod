@@ -27,9 +27,7 @@ Getting Started
 ===============
 
 - `Tutorial notebooks <https://nbviewer.jupyter.org/github/prmiles/pyfod/tree/master/tutorials/index.ipynb>`_
-- `Release history`_
-
-.. _Release history: CHANGELOG.rst
+- `Release history <https://github.com/prmiles/pyfod/blob/master/CHANGELOG.rst>`_
 
 Feedback
 ========
