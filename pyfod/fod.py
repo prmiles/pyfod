@@ -123,7 +123,7 @@ def caputo(f, lower, upper, dt=1e-4, alpha=0.0,
 
     .. math::
 
-        D_{RL}^\\alpha[f(t)] = \\frac{1}{\\Gamma(1-\\alpha)}
+        D_{C}^\\alpha[f(t)] = \\frac{1}{\\Gamma(1-\\alpha)}
         \\int_0^t\\frac{f(s)^{(1)}}{(t-s)^{\\alpha}}ds.
 
     To evaluate this we simply need to define a finite-difference scheme
